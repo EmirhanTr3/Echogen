@@ -1,0 +1,14 @@
+chat:
+  enabled: true
+  format: "<prefix><name><suffix> <reset><#809090>»</#809090> <message>"
+  item:
+    enabled: true
+    permission: false
+
+scoreboard:
+  enabled: true
+  title: "<red>scoreboard"
+  lines:
+    - "<aqua>test"
+    - "<red>hi"
+    - "<aqua>You are <player>"

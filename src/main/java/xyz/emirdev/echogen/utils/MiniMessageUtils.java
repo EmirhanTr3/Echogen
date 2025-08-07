@@ -1,4 +1,4 @@
-package xyz.emirdev.echogen;
+package xyz.emirdev.echogen.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +12,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import xyz.emirdev.echogen.Echogen;
 
 public class MiniMessageUtils {
     private long ticks = 0;

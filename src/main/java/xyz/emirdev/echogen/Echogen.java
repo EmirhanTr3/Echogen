@@ -9,13 +9,16 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
+import xyz.emirdev.echogen.commands.ChatCommand;
 import xyz.emirdev.echogen.commands.FlyCommand;
 import xyz.emirdev.echogen.commands.MainCommand;
 import xyz.emirdev.echogen.commands.SmiteCommand;
 import xyz.emirdev.echogen.commands.VanishCommand;
 import xyz.emirdev.echogen.events.ChatEvent;
+import xyz.emirdev.echogen.managers.FilterManager;
 import xyz.emirdev.echogen.managers.ScoreboardManager;
 import xyz.emirdev.echogen.managers.VanishManager;
+import xyz.emirdev.echogen.utils.MiniMessageUtils;
 
 public class Echogen extends JavaPlugin {
     private static Echogen instance;
@@ -23,6 +26,7 @@ public class Echogen extends JavaPlugin {
     private PluginConfig config;
     private ScoreboardManager scoreboardManager;
     private VanishManager vanishManager;
+    private FilterManager filterManager;
     private MiniMessageUtils miniMessageUtils;
     private boolean isPAPIEnabled;
 
@@ -46,6 +50,10 @@ public class Echogen extends JavaPlugin {
         return vanishManager;
     }
 
+    public FilterManager getFilterManager() {
+        return filterManager;
+    }
+
     public MiniMessageUtils getMiniMessageUtils() {
         return miniMessageUtils;
     }
@@ -57,6 +65,7 @@ public class Echogen extends JavaPlugin {
     public void reloadConfig() {
         this.config.load();
         scoreboardManager.toggle(config.getRootNode().node("scoreboard", "enabled").getBoolean());
+        filterManager.load();
     }
 
     private void registerCommands() {
@@ -67,6 +76,7 @@ public class Echogen extends JavaPlugin {
             registrar.register(new SmiteCommand().getCommand());
             registrar.register(new SmiteCommand().getSecondaryCommand());
             registrar.register(new VanishCommand().getCommand());
+            registrar.register(new ChatCommand().getCommand());
         });
     }
 
@@ -91,6 +101,8 @@ public class Echogen extends JavaPlugin {
 
         vanishManager = new VanishManager();
         Bukkit.getPluginManager().registerEvents(vanishManager, this);
+
+        filterManager = new FilterManager();
 
         miniMessageUtils = new MiniMessageUtils();
         miniMessageUtils.run();

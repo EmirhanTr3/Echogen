@@ -5,6 +5,11 @@ chat:
     enabled: true
     permission: false
 
+  filter:
+    - nword:
+        regex: \b(?!minigames?|shenanigans?)\w*n+ ?(?:i|1|!)+ ?g+ ?g?+ ?(?:e|a)?+ ?r?+\w*
+        type: censor
+
 scoreboard:
   enabled: true
   title: "<red>scoreboard"

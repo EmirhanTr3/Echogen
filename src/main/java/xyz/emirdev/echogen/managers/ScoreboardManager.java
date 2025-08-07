@@ -20,7 +20,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import xyz.emirdev.echogen.Echogen;
-import xyz.emirdev.echogen.Utils;
+import xyz.emirdev.echogen.utils.Utils;
 
 public class ScoreboardManager implements Listener {
     private final Map<UUID, FastBoard> boards = new HashMap<>();
@@ -35,6 +35,8 @@ public class ScoreboardManager implements Listener {
     public void toggle(boolean state) {
         this.enabled = state;
         if (state) {
+            if (this.task != null)
+                toggle(false);
             this.run();
             for (Player player : Bukkit.getOnlinePlayers()) {
                 boards.put(player.getUniqueId(), new FastBoard(player));

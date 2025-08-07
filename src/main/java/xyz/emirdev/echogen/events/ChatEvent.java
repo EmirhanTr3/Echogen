@@ -1,7 +1,16 @@
 package xyz.emirdev.echogen.events;
 
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Matcher;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.spongepowered.configurate.CommentedConfigurationNode;
@@ -12,12 +21,16 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import xyz.emirdev.echogen.Echogen;
-import xyz.emirdev.echogen.LuckPermsUtils;
-import xyz.emirdev.echogen.Utils;
+import xyz.emirdev.echogen.commands.ChatCommand;
+import xyz.emirdev.echogen.managers.FilterManager.FilterElement;
+import xyz.emirdev.echogen.utils.LuckPermsUtils;
+import xyz.emirdev.echogen.utils.TimeUtils;
+import xyz.emirdev.echogen.utils.Utils;
 
 public class ChatEvent implements Listener {
+    public static Map<UUID, Long> slowmodePlayers = new HashMap<>();
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void chatEvent(AsyncChatEvent event) {
         Player player = event.getPlayer();
         CommentedConfigurationNode rootNode = Echogen.get().getPluginConfig().getRootNode();
@@ -49,5 +62,74 @@ public class ChatEvent implements Listener {
                 Placeholder.component("message", message));
 
         event.renderer((p, d, m, a) -> component);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void chatCmdEvent(AsyncChatEvent event) {
+        Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
+
+        if (ChatCommand.chatMuted && !player.hasPermission("echogen.chat.mute.bypass")) {
+            player.sendRichMessage("<red>Chat is currently muted.</red>");
+            event.setCancelled(true);
+            return;
+        }
+
+        if (ChatCommand.slowmode != null && !player.hasPermission("echogen.chat.slowmode.bypass")) {
+            if (!slowmodePlayers.containsKey(uuid)
+                    || System.currentTimeMillis() > (slowmodePlayers.get(uuid) + ChatCommand.slowmode.toMillis())) {
+                slowmodePlayers.put(player.getUniqueId(), System.currentTimeMillis());
+            } else {
+                long expiresAt = slowmodePlayers.get(uuid) + ChatCommand.slowmode.toMillis();
+                Duration timeLeft = Duration.ofMillis(expiresAt - System.currentTimeMillis());
+
+                player.sendRichMessage(
+                        "<red>You cannot send a message for <dark_red><duration></dark_red>.</red>",
+                        Placeholder.unparsed("duration", TimeUtils.parseDurationToString(timeLeft)));
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @EventHandler
+    public void chatFilterEvent(AsyncChatEvent event) {
+        Player player = event.getPlayer();
+        if (player.hasPermission("echogen.chat.filter.bypass"))
+            return;
+
+        List<FilterElement> filters = Echogen.get().getFilterManager().getFilters();
+        if (filters.size() == 0)
+            return;
+
+        String message = PlainTextComponentSerializer.plainText().serialize(event.message());
+
+        for (FilterElement filter : filters) {
+            Matcher matcher = filter.getPattern().matcher(message);
+
+            while (matcher.find()) {
+                switch (filter.getType()) {
+                    case CENSOR:
+                        message = message.replace(matcher.group(0), matcher.group(0).replaceAll(".", "*"));
+                        break;
+                    case BLOCK_MESSAGE:
+                        event.setCancelled(true);
+                        player.sendRichMessage("<red>Your message has been filtered.</red>");
+                        return;
+                    case COMMAND:
+                        event.setCancelled(true);
+                        player.sendRichMessage("<red>Your message has been filtered.</red>");
+                        Bukkit.getScheduler().runTask(Echogen.get(), () -> {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                                    filter.getCommand()
+                                            .replaceAll("<player>", player.getName())
+                                            .replaceAll("<uuid>", player.getUniqueId().toString()));
+                        });
+                        return;
+                }
+            }
+        }
+
+        event.message(PlainTextComponentSerializer.plainText().deserialize(message));
     }
 }

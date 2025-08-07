@@ -1,10 +1,11 @@
-package xyz.emirdev.echogen;
+package xyz.emirdev.echogen.utils;
 
 import java.util.Objects;
 
 import org.bukkit.entity.Player;
 
 import net.luckperms.api.model.user.User;
+import xyz.emirdev.echogen.Echogen;
 
 public class LuckPermsUtils {
     public static User getUser(Player player) {

@@ -8,7 +8,7 @@ plugins {
 // TODO: Change the information in here to the information you need.
 // The name is located in settings.gradle.kts.
 group = "xyz.emirdev.echogen"
-version = "1.0.0"
+version = "1.1.0"
 
 repositories {
     mavenCentral()

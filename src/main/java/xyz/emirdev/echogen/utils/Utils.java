@@ -1,4 +1,4 @@
-package xyz.emirdev.echogen;
+package xyz.emirdev.echogen.utils;
 
 import java.util.ArrayList;
 import java.util.List;

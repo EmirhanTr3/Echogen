@@ -20,7 +20,7 @@ public class SmiteCommand extends PluginCommand {
     @Override
     public LiteralCommandNode<CommandSourceStack> getCommand() {
         return Commands.literal("smite")
-                .requires(ctx -> ctx.getSender().hasPermission("echogen.smite"))
+                .requires(hasPermission("echogen.smite"))
                 .then(Commands.argument("players", ArgumentTypes.players())
                         .executes(this::smite))
                 .build();
@@ -35,6 +35,8 @@ public class SmiteCommand extends PluginCommand {
     private int smite(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         CommandSender sender = ctx.getSource().getSender();
         List<Player> targets = getPlayers(ctx, "players");
+        if (targets == null)
+            return 1;
 
         for (Player target : targets) {
             target.getWorld().strikeLightningEffect(target.getLocation());

@@ -1,6 +1,6 @@
 chat:
   enabled: true
-  format: "<prefix><name><suffix> <reset><#809090>»</#809090> <message>"
+  format: "<prefix><name><suffix> <reset><#809090>»</#809090> <white><message>"
   item:
     enabled: true
     permission: false
@@ -9,6 +9,18 @@ chat:
     - nword:
         regex: \b(?!minigames?|shenanigans?)\w*n+ ?(?:i|1|!)+ ?g+ ?g?+ ?(?:e|a)?+ ?r?+\w*
         type: censor
+
+  prefix:
+    enabled: true
+    blacklist:
+      - badexample
+    extra:
+      - example:
+          name: <light_purple>Example
+          prefix: "<light_purple>[Example] "
+          description:
+            - "An example prefix added by default."
+            - "You can remove this prefix from the Echogen config."
 
 scoreboard:
   enabled: true

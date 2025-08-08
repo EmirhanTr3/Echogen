@@ -16,7 +16,7 @@ public class MainCommand extends PluginCommand {
     @Override
     public LiteralCommandNode<CommandSourceStack> getCommand() {
         return Commands.literal("echogen")
-                .requires(ctx -> ctx.getSender().hasPermission("echogen.admin"))
+                .requires(hasPermission("echogen.admin"))
                 .then(Commands.literal("reload")
                         .executes(this::reload))
                 .build();

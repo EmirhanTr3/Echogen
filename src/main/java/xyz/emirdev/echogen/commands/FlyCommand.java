@@ -18,10 +18,10 @@ public class FlyCommand extends PluginCommand {
     @Override
     public LiteralCommandNode<CommandSourceStack> getCommand() {
         return Commands.literal("fly")
-                .requires(ctx -> ctx.getSender().hasPermission("echogen.fly"))
+                .requires(hasPermission("echogen.fly"))
                 .executes(this::fly)
                 .then(Commands.argument("player", ArgumentTypes.player())
-                        .requires(ctx -> ctx.getSender().hasPermission("echogen.fly.others"))
+                        .requires(hasPermission("echogen.fly.others"))
                         .executes(this::flyOther))
                 .build();
     }

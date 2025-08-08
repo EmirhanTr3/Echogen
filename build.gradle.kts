@@ -8,7 +8,7 @@ plugins {
 // TODO: Change the information in here to the information you need.
 // The name is located in settings.gradle.kts.
 group = "xyz.emirdev.echogen"
-version = "1.1.0"
+version = "1.2.0"
 
 repositories {
     mavenCentral()
@@ -31,10 +31,17 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     paperLibrary("fr.mrmicky:fastboard:2.1.5")
     paperLibrary("org.spongepowered:configurate-yaml:4.1.2")
+    paperLibrary("com.zaxxer:HikariCP:7.0.0")
+    paperLibrary("com.h2database:h2:2.3.232")
+    implementation("com.github.stefvanschie.inventoryframework:IF:0.11.3")
 }
 
 tasks.build {
     dependsOn("shadowJar")
+}
+
+tasks.shadowJar {
+    relocate("com.github.stefvanschie.inventoryframework", "xyz.emirdev.echogen.inventoryframework")
 }
 
 // Configuring paper-plugin.yml

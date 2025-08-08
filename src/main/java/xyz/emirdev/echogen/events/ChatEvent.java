@@ -23,6 +23,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import xyz.emirdev.echogen.Echogen;
 import xyz.emirdev.echogen.commands.ChatCommand;
 import xyz.emirdev.echogen.managers.FilterManager.FilterElement;
+import xyz.emirdev.echogen.managers.PrefixManager.Prefix;
 import xyz.emirdev.echogen.utils.LuckPermsUtils;
 import xyz.emirdev.echogen.utils.TimeUtils;
 import xyz.emirdev.echogen.utils.Utils;
@@ -30,23 +31,19 @@ import xyz.emirdev.echogen.utils.Utils;
 public class ChatEvent implements Listener {
     public static Map<UUID, Long> slowmodePlayers = new HashMap<>();
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void chatEvent(AsyncChatEvent event) {
-        Player player = event.getPlayer();
+    public static Component getChatFormat(Player player, Component message, String prefix) {
         CommentedConfigurationNode rootNode = Echogen.get().getPluginConfig().getRootNode();
-        if (rootNode.node("chat", "enabled").getBoolean() == false)
-            return;
 
-        Component message = player.hasPermission("echogen.chat.component")
+        Component component = player.hasPermission("echogen.chat.component")
                 ? MiniMessage.miniMessage()
-                        .deserialize(PlainTextComponentSerializer.plainText().serialize(event.message()))
-                : event.message();
+                        .deserialize(PlainTextComponentSerializer.plainText().serialize(message))
+                : message;
 
         ItemStack item = player.getInventory().getItemInMainHand();
         if (item != null && !item.getType().isAir() && rootNode.node("chat", "item", "enabled").getBoolean() == true) {
             boolean requiresPermission = rootNode.node("chat", "item", "permission").getBoolean();
             if (!requiresPermission || player.hasPermission("echogen.chat.item")) {
-                message = message.replaceText(c -> c
+                component = component.replaceText(c -> c
                         .matchLiteral("[item]")
                         .replacement(item.displayName().hoverEvent(item.asHoverEvent()))
                         .build());
@@ -55,11 +52,31 @@ public class ChatEvent implements Listener {
 
         String format = rootNode.node("chat", "format").getString();
 
-        Component component = Utils.formatMessage(format,
-                Placeholder.parsed("prefix", LuckPermsUtils.getPrefix(player)),
+        return Utils.formatMessage(format,
+                Placeholder.parsed("prefix", prefix != null ? prefix : LuckPermsUtils.getPrefix(player)),
                 Placeholder.parsed("suffix", LuckPermsUtils.getSuffix(player)),
                 Placeholder.parsed("name", player.getName()),
                 Placeholder.component("message", message));
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void chatEvent(AsyncChatEvent event) {
+        Player player = event.getPlayer();
+        CommentedConfigurationNode rootNode = Echogen.get().getPluginConfig().getRootNode();
+        if (rootNode.node("chat", "enabled").getBoolean() == false)
+            return;
+
+        String currentPrefix = Echogen.get().getPrefixDatabase().getPrefix(player);
+        Prefix prefix = Echogen.get().getPrefixManager().getPrefix(currentPrefix);
+
+        if (prefix == null && currentPrefix != null) {
+            Echogen.get().getPrefixDatabase().deletePrefix(player);
+        }
+
+        Component component = getChatFormat(
+                player,
+                event.message(),
+                prefix != null ? prefix.getPrefix() : null);
 
         event.renderer((p, d, m, a) -> component);
     }

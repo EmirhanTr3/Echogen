@@ -19,10 +19,10 @@ public class VanishCommand extends PluginCommand {
     @Override
     public LiteralCommandNode<CommandSourceStack> getCommand() {
         return Commands.literal("vanish")
-                .requires(ctx -> ctx.getSender().hasPermission("echogen.vanish"))
+                .requires(hasPermission("echogen.vanish"))
                 .executes(this::vanish)
                 .then(Commands.argument("player", ArgumentTypes.player())
-                        .requires(ctx -> ctx.getSender().hasPermission("echogen.vanish.others"))
+                        .requires(hasPermission("echogen.vanish.others"))
                         .executes(this::vanishOther))
                 .build();
     }

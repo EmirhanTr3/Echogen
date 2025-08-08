@@ -12,10 +12,13 @@ import net.luckperms.api.LuckPermsProvider;
 import xyz.emirdev.echogen.commands.ChatCommand;
 import xyz.emirdev.echogen.commands.FlyCommand;
 import xyz.emirdev.echogen.commands.MainCommand;
+import xyz.emirdev.echogen.commands.PrefixCommand;
 import xyz.emirdev.echogen.commands.SmiteCommand;
 import xyz.emirdev.echogen.commands.VanishCommand;
+import xyz.emirdev.echogen.database.PrefixDatabase;
 import xyz.emirdev.echogen.events.ChatEvent;
 import xyz.emirdev.echogen.managers.FilterManager;
+import xyz.emirdev.echogen.managers.PrefixManager;
 import xyz.emirdev.echogen.managers.ScoreboardManager;
 import xyz.emirdev.echogen.managers.VanishManager;
 import xyz.emirdev.echogen.utils.MiniMessageUtils;
@@ -27,6 +30,8 @@ public class Echogen extends JavaPlugin {
     private ScoreboardManager scoreboardManager;
     private VanishManager vanishManager;
     private FilterManager filterManager;
+    private PrefixManager prefixManager;
+    private PrefixDatabase prefixDatabase;
     private MiniMessageUtils miniMessageUtils;
     private boolean isPAPIEnabled;
 
@@ -54,6 +59,14 @@ public class Echogen extends JavaPlugin {
         return filterManager;
     }
 
+    public PrefixManager getPrefixManager() {
+        return prefixManager;
+    }
+
+    public PrefixDatabase getPrefixDatabase() {
+        return prefixDatabase;
+    }
+
     public MiniMessageUtils getMiniMessageUtils() {
         return miniMessageUtils;
     }
@@ -66,6 +79,7 @@ public class Echogen extends JavaPlugin {
         this.config.load();
         scoreboardManager.toggle(config.getRootNode().node("scoreboard", "enabled").getBoolean());
         filterManager.load();
+        prefixManager.load();
     }
 
     private void registerCommands() {
@@ -77,6 +91,7 @@ public class Echogen extends JavaPlugin {
             registrar.register(new SmiteCommand().getSecondaryCommand());
             registrar.register(new VanishCommand().getCommand());
             registrar.register(new ChatCommand().getCommand());
+            registrar.register(new PrefixCommand().getCommand());
         });
     }
 
@@ -104,10 +119,14 @@ public class Echogen extends JavaPlugin {
 
         filterManager = new FilterManager();
 
+        prefixManager = new PrefixManager();
+        prefixDatabase = new PrefixDatabase();
+
         miniMessageUtils = new MiniMessageUtils();
         miniMessageUtils.run();
 
-        new PAPIExpansion().register();
+        if (isPAPIEnabled)
+            new PAPIExpansion().register();
     }
 
     @Override

@@ -23,7 +23,6 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import xyz.emirdev.echogen.Echogen;
 import xyz.emirdev.echogen.commands.ChatCommand;
 import xyz.emirdev.echogen.managers.FilterManager.FilterElement;
-import xyz.emirdev.echogen.managers.PrefixManager.Prefix;
 import xyz.emirdev.echogen.utils.LuckPermsUtils;
 import xyz.emirdev.echogen.utils.TimeUtils;
 import xyz.emirdev.echogen.utils.Utils;
@@ -56,7 +55,7 @@ public class ChatEvent implements Listener {
                 Placeholder.parsed("prefix", prefix != null ? prefix : LuckPermsUtils.getPrefix(player)),
                 Placeholder.parsed("suffix", LuckPermsUtils.getSuffix(player)),
                 Placeholder.parsed("name", player.getName()),
-                Placeholder.component("message", message));
+                Placeholder.component("message", component));
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -66,17 +65,9 @@ public class ChatEvent implements Listener {
         if (rootNode.node("chat", "enabled").getBoolean() == false)
             return;
 
-        String currentPrefix = Echogen.get().getPrefixDatabase().getPrefix(player);
-        Prefix prefix = Echogen.get().getPrefixManager().getPrefix(currentPrefix);
+        String prefix = Echogen.get().getPrefixManager().getPlayerPrefixString(player);
 
-        if (prefix == null && currentPrefix != null) {
-            Echogen.get().getPrefixDatabase().deletePrefix(player);
-        }
-
-        Component component = getChatFormat(
-                player,
-                event.message(),
-                prefix != null ? prefix.getPrefix() : null);
+        Component component = getChatFormat(player, event.message(), prefix);
 
         event.renderer((p, d, m, a) -> component);
     }

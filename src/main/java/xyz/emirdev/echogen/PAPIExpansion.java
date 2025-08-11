@@ -1,5 +1,7 @@
 package xyz.emirdev.echogen;
 
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -34,10 +36,11 @@ public class PAPIExpansion extends PlaceholderExpansion {
 
         Player onlinePlayer = Bukkit.getPlayer(player.getUniqueId());
 
-        if (params.equalsIgnoreCase("vanished")) {
-            return String.valueOf(Echogen.get().getVanishManager().isVanished(onlinePlayer));
-        }
-
-        return null;
+        return switch (params.toLowerCase()) {
+            case "vanished" -> String.valueOf(Echogen.get().getVanishManager().isVanished(onlinePlayer));
+            case "prefix" -> Objects.requireNonNullElse(
+                    Echogen.get().getPrefixManager().getPlayerPrefixString(onlinePlayer), "");
+            default -> null;
+        };
     }
 }

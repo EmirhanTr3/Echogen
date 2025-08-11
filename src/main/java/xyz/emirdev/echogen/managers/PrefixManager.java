@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.bukkit.entity.Player;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import io.leangen.geantyref.TypeToken;
@@ -30,6 +31,23 @@ public class PrefixManager {
         return optionalPrefix.get();
     }
 
+    public Prefix getPlayerPrefix(Player player) {
+        String currentPrefix = Echogen.get().getPrefixDatabase().getPrefix(player);
+        Prefix prefix = getPrefix(currentPrefix);
+
+        if (prefix == null && currentPrefix != null) {
+            Echogen.get().getPrefixDatabase().deletePrefix(player);
+        }
+
+        return prefix;
+    }
+
+    public String getPlayerPrefixString(Player player) {
+        Prefix prefix = getPlayerPrefix(player);
+
+        return prefix != null ? prefix.getPrefix() : null;
+    }
+
     public void load() {
         prefixes.clear();
 
@@ -45,7 +63,10 @@ public class PrefixManager {
             blacklistedGroups = new ArrayList<>();
         }
 
-        for (Group group : LuckPermsUtils.getAllGroups()) {
+        List<Group> sortedGroups = LuckPermsUtils.getAllGroups().stream()
+                .sorted((a, b) -> b.getWeight().orElse(0) - a.getWeight().orElse(0)).toList();
+
+        for (Group group : sortedGroups) {
             if (blacklistedGroups.contains(group.getName()))
                 continue;
 

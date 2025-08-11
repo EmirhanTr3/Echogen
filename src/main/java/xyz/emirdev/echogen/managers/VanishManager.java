@@ -36,7 +36,8 @@ public class VanishManager implements Listener {
         vanishedPlayers.add(player.getUniqueId());
 
         for (Player oPlayer : Bukkit.getOnlinePlayers()) {
-            oPlayer.hidePlayer(Echogen.get(), player);
+            if (!oPlayer.hasPermission("echogen.vanish"))
+                oPlayer.hidePlayer(Echogen.get(), player);
         }
     }
 
@@ -51,6 +52,8 @@ public class VanishManager implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
+        if (player.hasPermission("echogen.vanish"))
+            return;
 
         for (UUID uuid : vanishedPlayers) {
             player.hidePlayer(Echogen.get(), Bukkit.getPlayer(uuid));

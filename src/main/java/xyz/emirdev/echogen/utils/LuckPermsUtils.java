@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
+import net.luckperms.api.query.Flag;
 import net.luckperms.api.query.QueryOptions;
 import xyz.emirdev.echogen.Echogen;
 
@@ -25,7 +26,9 @@ public class LuckPermsUtils {
     }
 
     public static Collection<Group> getPlayerGroups(Player player) {
-        return getUser(player).getInheritedGroups(QueryOptions.defaultContextualOptions());
+        QueryOptions queryOptions = QueryOptions.defaultContextualOptions().toBuilder()
+                .flag(Flag.RESOLVE_INHERITANCE, false).build();
+        return getUser(player).getInheritedGroups(queryOptions);
     }
 
     public static Set<Group> getAllGroups() {

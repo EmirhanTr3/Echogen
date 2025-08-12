@@ -68,8 +68,12 @@ public class PrefixGUI {
                 status = "selected";
 
             } else if (prefix.getId().startsWith("group-")) {
-                if (LuckPermsUtils.getPlayerGroups(player).stream()
-                        .filter(g -> g.getName().equals(prefix.getId().substring(6))).findAny().isPresent())
+                String groupName = prefix.getId().substring(6);
+                if (LuckPermsUtils.getUser(player).getCachedData().getMetaData().getPrimaryGroup().equals(groupName))
+                    status = "default";
+
+                else if (LuckPermsUtils.getPlayerGroups(player).stream()
+                        .filter(g -> g.getName().equals(groupName)).findAny().isPresent())
                     status = "unlocked";
 
             } else if (player.hasPermission("echogen.chat.prefix." + prefix.getId())) {
@@ -79,6 +83,8 @@ public class PrefixGUI {
             Component statusComponent = switch (status) {
                 case "selected" -> Utils.formatMessage("<gray>[<aqua>⏺</aqua>]</gray> <aqua>Selected</aqua>");
                 case "unlocked" -> Utils.formatMessage("<gray>[<green>✔</green>]</gray> <green>Unlocked</green>");
+                case "default" ->
+                    Utils.formatMessage("<gray>[<yellow>⚠</yellow>]</gray> <yellow>Default Prefix</yellow>");
                 default -> Utils.formatMessage("<gray>[<red>❌</red>]</gray> <red>Locked</red>");
             };
 

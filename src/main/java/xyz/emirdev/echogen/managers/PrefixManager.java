@@ -67,8 +67,11 @@ public class PrefixManager {
                 .sorted((a, b) -> b.getWeight().orElse(0) - a.getWeight().orElse(0)).toList();
 
         for (Group group : sortedGroups) {
-            if (blacklistedGroups.contains(group.getName()))
+            if (blacklistedGroups.contains(group.getName())) {
+                Echogen.get().getLogger().info(
+                        "Skipped LuckPerms group " + group.getName() + " due to it being blacklisted from config.");
                 continue;
+            }
 
             prefixes.add(new Prefix(
                     "group-" + group.getName(),

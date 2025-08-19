@@ -26,12 +26,6 @@ public class SmiteCommand extends PluginCommand {
                 .build();
     }
 
-    public LiteralCommandNode<CommandSourceStack> getSecondaryCommand() {
-        return Commands.literal("thor")
-                .redirect(getCommand())
-                .build();
-    }
-
     private int smite(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         CommandSender sender = ctx.getSource().getSender();
         List<Player> targets = getPlayers(ctx, "players");

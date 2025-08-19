@@ -10,6 +10,7 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import xyz.emirdev.echogen.commands.ChatCommand;
+import xyz.emirdev.echogen.commands.EnderChestCommand;
 import xyz.emirdev.echogen.commands.FlyCommand;
 import xyz.emirdev.echogen.commands.MainCommand;
 import xyz.emirdev.echogen.commands.PrefixCommand;
@@ -87,11 +88,11 @@ public class Echogen extends JavaPlugin {
             Commands registrar = commands.registrar();
             registrar.register(new MainCommand().getCommand());
             registrar.register(new FlyCommand().getCommand());
-            registrar.register(new SmiteCommand().getCommand());
-            registrar.register(new SmiteCommand().getSecondaryCommand());
+            registrar.register(new SmiteCommand().getCommand(), List.of("thor"));
             registrar.register(new VanishCommand().getCommand());
             registrar.register(new ChatCommand().getCommand());
             registrar.register(new PrefixCommand().getCommand());
+            registrar.register(new EnderChestCommand().getCommand(), List.of("ec"));
         });
     }
 

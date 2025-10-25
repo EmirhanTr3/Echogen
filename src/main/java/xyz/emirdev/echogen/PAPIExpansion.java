@@ -61,9 +61,9 @@ public class PAPIExpansion extends PlaceholderExpansion {
     }
 
     private String skriptPlaceholders(Player player, String params) {
-        String variable = params.replaceFirst("sk_", "");
+        String variable = params.substring("sk_".length());
         if (variable.startsWith("function_")) {
-            String function = variable.replace("function_", "");
+            String function = variable.substring("function_".length());
 
             Object[][] funcParams = {{ player }};
             Function<?> func = Functions.getGlobalFunction(function);
@@ -75,6 +75,15 @@ public class PAPIExpansion extends PlaceholderExpansion {
             return String.valueOf(returnValue[0]);
         }
 
+        String defaultValue = null;
+        if (variable.contains("_?_")) {
+            String[] split = variable.split("_\\?_");
+            if (split.length != 2) return null;
+
+            variable = split[0];
+            defaultValue = split[1];
+        }
+
         Pattern pattern = Pattern.compile("[{\\[](.*?)[}\\]]");
         Matcher matcher = pattern.matcher(variable);
 
@@ -84,6 +93,8 @@ public class PAPIExpansion extends PlaceholderExpansion {
             variable = variable.replace(match, PlaceholderAPI.setPlaceholders(player, "%" + placeholder + "%"));
         }
 
-        return String.valueOf(Variables.getVariable(variable, null, false));
+        Object value = Variables.getVariable(variable, null, false);
+        if (value == null && defaultValue != null) return defaultValue;
+        return String.valueOf(value);
     }
 }

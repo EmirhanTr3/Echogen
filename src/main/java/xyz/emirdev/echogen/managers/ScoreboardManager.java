@@ -54,7 +54,7 @@ public class ScoreboardManager implements Listener {
     }
 
     public void run() {
-        this.task = Bukkit.getScheduler().runTaskTimer(Echogen.get(), () -> {
+        this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(Echogen.get(), () -> {
             for (FastBoard board : boards.values()) {
                 try {
                     updateBoard(board);

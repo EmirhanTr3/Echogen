@@ -2,6 +2,7 @@ package xyz.emirdev.echogen;
 
 import java.util.List;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,54 +27,32 @@ import xyz.emirdev.echogen.utils.MiniMessageUtils;
 
 public class Echogen extends JavaPlugin {
     private static Echogen instance;
+    @Getter
     private LuckPerms luckPerms;
     private PluginConfig config;
+    @Getter
     private ScoreboardManager scoreboardManager;
+    @Getter
     private VanishManager vanishManager;
+    @Getter
     private FilterManager filterManager;
+    @Getter
     private PrefixManager prefixManager;
+    @Getter
     private PrefixDatabase prefixDatabase;
+    @Getter
     private MiniMessageUtils miniMessageUtils;
+    @Getter
     private boolean isPAPIEnabled;
+    @Getter
+    private boolean isSkriptEnabled;
 
     public static Echogen get() {
         return instance;
     }
 
-    public LuckPerms getLuckPerms() {
-        return luckPerms;
-    }
-
     public PluginConfig getPluginConfig() {
         return config;
-    }
-
-    public ScoreboardManager getScoreboardManager() {
-        return scoreboardManager;
-    }
-
-    public VanishManager getVanishManager() {
-        return vanishManager;
-    }
-
-    public FilterManager getFilterManager() {
-        return filterManager;
-    }
-
-    public PrefixManager getPrefixManager() {
-        return prefixManager;
-    }
-
-    public PrefixDatabase getPrefixDatabase() {
-        return prefixDatabase;
-    }
-
-    public MiniMessageUtils getMiniMessageUtils() {
-        return miniMessageUtils;
-    }
-
-    public boolean isPAPIEnabled() {
-        return isPAPIEnabled;
     }
 
     public void reloadConfig() {
@@ -108,6 +87,7 @@ public class Echogen extends JavaPlugin {
         registerEvents();
         luckPerms = LuckPermsProvider.get();
         isPAPIEnabled = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
+        isSkriptEnabled = Bukkit.getPluginManager().isPluginEnabled("Skript");
 
         config = new PluginConfig(this);
         config.load();

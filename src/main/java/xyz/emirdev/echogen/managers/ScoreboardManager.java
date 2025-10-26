@@ -33,10 +33,10 @@ public class ScoreboardManager implements Listener {
     }
 
     public void toggle(boolean state) {
-        this.enabled = state;
         if (state) {
             if (this.task != null)
                 toggle(false);
+            this.enabled = true;
             this.run();
             for (Player player : Bukkit.getOnlinePlayers()) {
                 boards.put(player.getUniqueId(), new FastBoard(player));
@@ -44,6 +44,7 @@ public class ScoreboardManager implements Listener {
         } else {
             if (this.task == null)
                 return;
+            this.enabled = false;
             this.task.cancel();
             this.task = null;
             for (FastBoard board : this.boards.values()) {

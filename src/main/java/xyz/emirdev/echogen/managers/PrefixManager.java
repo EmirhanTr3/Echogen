@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -14,21 +15,16 @@ import xyz.emirdev.echogen.Echogen;
 import xyz.emirdev.echogen.utils.LuckPermsUtils;
 
 public class PrefixManager {
-    List<Prefix> prefixes = new ArrayList<>();
+    @Getter
+    private final List<Prefix> prefixes = new ArrayList<>();
 
     public PrefixManager() {
         this.load();
     }
 
-    public List<Prefix> getPrefixes() {
-        return prefixes;
-    }
-
     public Prefix getPrefix(String id) {
         Optional<Prefix> optionalPrefix = prefixes.stream().filter(p -> p.getId().equals(id)).findFirst();
-        if (!optionalPrefix.isPresent())
-            return null;
-        return optionalPrefix.get();
+        return optionalPrefix.orElse(null);
     }
 
     public Prefix getPlayerPrefix(Player player) {
@@ -107,33 +103,18 @@ public class PrefixManager {
 
     }
 
-    public class Prefix {
-        private String id;
-        private String name;
-        private String prefix;
-        private List<String> description;
+    @Getter
+    public static class Prefix {
+        private final String id;
+        private final String name;
+        private final String prefix;
+        private final List<String> description;
 
         public Prefix(String id, String name, String prefix, List<String> description) {
             this.id = id;
             this.name = name;
             this.prefix = prefix;
             this.description = description;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getPrefix() {
-            return prefix;
-        }
-
-        public List<String> getDescription() {
-            return description;
         }
     }
 }

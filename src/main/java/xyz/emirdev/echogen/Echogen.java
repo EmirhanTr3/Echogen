@@ -1,28 +1,20 @@
 package xyz.emirdev.echogen;
 
-import java.util.List;
-
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
-import xyz.emirdev.echogen.commands.ChatCommand;
-import xyz.emirdev.echogen.commands.EnderChestCommand;
-import xyz.emirdev.echogen.commands.FlyCommand;
-import xyz.emirdev.echogen.commands.MainCommand;
-import xyz.emirdev.echogen.commands.PrefixCommand;
-import xyz.emirdev.echogen.commands.SmiteCommand;
-import xyz.emirdev.echogen.commands.VanishCommand;
 import xyz.emirdev.echogen.database.PrefixDatabase;
-import xyz.emirdev.echogen.events.ChatEvent;
 import xyz.emirdev.echogen.managers.FilterManager;
 import xyz.emirdev.echogen.managers.PrefixManager;
 import xyz.emirdev.echogen.managers.ScoreboardManager;
 import xyz.emirdev.echogen.managers.VanishManager;
+import xyz.emirdev.echogen.utils.ClassUtils;
 import xyz.emirdev.echogen.utils.MiniMessageUtils;
 
 public class Echogen extends JavaPlugin {
@@ -62,29 +54,9 @@ public class Echogen extends JavaPlugin {
         prefixManager.load();
     }
 
-    private void registerCommands() {
-        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
-            Commands registrar = commands.registrar();
-            registrar.register(new MainCommand().getCommand());
-            registrar.register(new FlyCommand().getCommand());
-            registrar.register(new SmiteCommand().getCommand(), List.of("thor"));
-            registrar.register(new VanishCommand().getCommand());
-            registrar.register(new ChatCommand().getCommand());
-            registrar.register(new PrefixCommand().getCommand());
-            registrar.register(new EnderChestCommand().getCommand(), List.of("ec"));
-        });
-    }
-
-    private void registerEvents() {
-        List.of(
-                new ChatEvent()).forEach(e -> Bukkit.getPluginManager().registerEvents(e, this));
-    }
-
     @Override
     public void onEnable() {
         instance = this;
-        registerCommands();
-        registerEvents();
         luckPerms = LuckPermsProvider.get();
         isPAPIEnabled = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
         isSkriptEnabled = Bukkit.getPluginManager().isPluginEnabled("Skript");
@@ -108,6 +80,36 @@ public class Echogen extends JavaPlugin {
 
         if (isPAPIEnabled)
             new PAPIExpansion().register();
+
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
+            Commands registrar = commands.registrar();
+            ClassUtils.findClasses(
+                    "xyz.emirdev.echogen.commands",
+                    clazz -> clazz.extendsSuperclass(PluginCommand.class),
+                    clazz -> {
+                        PluginCommand command;
+                        try {
+                            command = clazz.loadClass().asSubclass(PluginCommand.class).getConstructor().newInstance();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+
+                        registrar.register(command.getCommand(), command.getAliases());
+                    }
+            );
+        });
+
+        ClassUtils.findClasses(
+                "xyz.emirdev.echogen.events",
+                clazz -> clazz.implementsInterface(Listener.class),
+                clazz -> {
+                    try {
+                        Bukkit.getPluginManager().registerEvents((Listener) clazz.loadClass().getConstructor().newInstance(), this);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
     }
 
     @Override

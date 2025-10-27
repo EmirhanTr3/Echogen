@@ -11,6 +11,8 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import xyz.emirdev.echogen.PluginCommand;
 
+import java.util.Set;
+
 public class EnderChestCommand extends PluginCommand {
 
     @Override
@@ -22,6 +24,11 @@ public class EnderChestCommand extends PluginCommand {
                         .requires(hasPermission("echogen.enderchest.others"))
                         .executes(this::enderchestOther))
                 .build();
+    }
+
+    @Override
+    public Set<String> getAliases() {
+        return Set.of("ec");
     }
 
     private int enderchest(CommandContext<CommandSourceStack> ctx) {

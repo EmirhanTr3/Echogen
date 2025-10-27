@@ -64,7 +64,7 @@ public class PrefixGUI {
             String selectedPrefix = Echogen.get().getPrefixDatabase().getPrefix(player);
             String status = "locked";
 
-            if (selectedPrefix != null && prefix.getId().equals(selectedPrefix)) {
+            if (prefix.getId().equals(selectedPrefix)) {
                 status = "selected";
 
             } else if (prefix.getId().startsWith("group-")) {
@@ -73,7 +73,7 @@ public class PrefixGUI {
                     status = "default";
 
                 else if (LuckPermsUtils.getPlayerGroups(player).stream()
-                        .filter(g -> g.getName().equals(groupName)).findAny().isPresent())
+                        .anyMatch(g -> g.getName().equals(groupName)))
                     status = "unlocked";
 
             } else if (player.hasPermission("echogen.chat.prefix." + prefix.getId())) {
@@ -118,7 +118,7 @@ public class PrefixGUI {
 
             GuiItem guiItem = new GuiItem(item);
             guiItem.setAction(event -> {
-                if (finalStatus != "unlocked")
+                if (!finalStatus.equals("unlocked"))
                     return;
                 Echogen.get().getPrefixDatabase().setPrefix(player, prefix.getId());
                 openGUI(player);

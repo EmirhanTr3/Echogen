@@ -28,7 +28,7 @@ import xyz.emirdev.echogen.utils.TimeUtils;
 import xyz.emirdev.echogen.utils.Utils;
 
 public class ChatEvent implements Listener {
-    public static Map<UUID, Long> slowmodePlayers = new HashMap<>();
+    public static final Map<UUID, Long> slowmodePlayers = new HashMap<>();
 
     public static Component getChatFormat(Player player, Component message, String prefix) {
         CommentedConfigurationNode rootNode = Echogen.get().getPluginConfig().getRootNode();
@@ -39,7 +39,7 @@ public class ChatEvent implements Listener {
                 : message;
 
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (item != null && !item.getType().isAir() && rootNode.node("chat", "item", "enabled").getBoolean() == true) {
+        if (!item.getType().isAir() && rootNode.node("chat", "item", "enabled").getBoolean()) {
             boolean requiresPermission = rootNode.node("chat", "item", "permission").getBoolean();
             if (!requiresPermission || player.hasPermission("echogen.chat.item")) {
                 component = component.replaceText(c -> c
@@ -62,11 +62,10 @@ public class ChatEvent implements Listener {
     public void chatEvent(AsyncChatEvent event) {
         Player player = event.getPlayer();
         CommentedConfigurationNode rootNode = Echogen.get().getPluginConfig().getRootNode();
-        if (rootNode.node("chat", "enabled").getBoolean() == false)
+        if (!rootNode.node("chat", "enabled").getBoolean())
             return;
 
         String prefix = Echogen.get().getPrefixManager().getPlayerPrefixString(player);
-
         Component component = getChatFormat(player, event.message(), prefix);
 
         event.renderer((p, d, m, a) -> component);
@@ -107,7 +106,7 @@ public class ChatEvent implements Listener {
             return;
 
         List<FilterElement> filters = Echogen.get().getFilterManager().getFilters();
-        if (filters.size() == 0)
+        if (filters.isEmpty())
             return;
 
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());

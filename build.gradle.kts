@@ -5,10 +5,8 @@ plugins {
     id("com.gradleup.shadow") version "9.0.0-rc1"
 }
 
-// TODO: Change the information in here to the information you need.
-// The name is located in settings.gradle.kts.
 group = "xyz.emirdev.echogen"
-version = "1.2.3"
+version = "1.2.4"
 
 repositories {
     mavenCentral()
@@ -17,10 +15,6 @@ repositories {
     maven { url = uri("https://repo.skriptlang.org/releases") }
 }
 
-// When specifying dependencies, make sure to follow these rules:
-// - If you want to shade the dependency you want to add, use implementation().
-// - If you want to load the dependency during runtime, use paperLibrary().
-// - If you want to include a plugin API, use compileOnly().
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
     compileOnly("net.luckperms:api:5.4")
@@ -32,15 +26,19 @@ dependencies {
     paperLibrary("org.spongepowered:configurate-yaml:4.1.2")
     paperLibrary("com.zaxxer:HikariCP:7.0.0")
     paperLibrary("com.h2database:h2:2.3.232")
+    paperLibrary("io.github.classgraph:classgraph:4.8.179")
     implementation("com.github.stefvanschie.inventoryframework:IF:0.11.3")
 }
 
-tasks.build {
-    dependsOn("shadowJar")
-}
+tasks {
+    build {
+        dependsOn("shadowJar")
+    }
 
-tasks.shadowJar {
-    relocate("com.github.stefvanschie.inventoryframework", "xyz.emirdev.echogen.inventoryframework")
+    shadowJar {
+        relocate("com.github.stefvanschie.inventoryframework", "xyz.emirdev.echogen.inventoryframework")
+        archiveClassifier = ""
+    }
 }
 
 // Configuring paper-plugin.yml

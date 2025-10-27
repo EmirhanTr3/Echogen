@@ -27,9 +27,9 @@ public class TimeUtils {
             String unit = matcher.group(2);
 
             switch (unit) {
-                case "y" -> totalSeconds += value * 365L * 24 * 60 * 60; // 365 days per year
-                case "mo" -> totalSeconds += value * 30L * 24 * 60 * 60; // 30 days per month
-                case "w" -> totalSeconds += value * 7L * 24 * 60 * 60; // 7 days per week
+                case "y" -> totalSeconds += value * 365L * 24 * 60 * 60;
+                case "mo" -> totalSeconds += value * 30L * 24 * 60 * 60;
+                case "w" -> totalSeconds += value * 7L * 24 * 60 * 60;
                 case "d" -> totalSeconds += value * 24L * 60 * 60;
                 case "h" -> totalSeconds += value * 60L * 60;
                 case "m" -> totalSeconds += value * 60L;
@@ -37,7 +37,6 @@ public class TimeUtils {
             }
         }
 
-        // Adjusted check for "0s" as the only valid zero duration string
         if (!foundAnyMatch && !durationString.trim().equals("0s"))
             return null;
 
@@ -65,21 +64,21 @@ public class TimeUtils {
             result.append(days).append(days == 1 ? " day" : " days");
 
         if (hours > 0) {
-            if (result.length() > 0)
+            if (!result.isEmpty())
                 result.append(" ");
 
             result.append(hours).append(hours == 1 ? " hour" : " hours");
         }
 
         if (minutes > 0) {
-            if (result.length() > 0)
+            if (!result.isEmpty())
                 result.append(" ");
 
             result.append(minutes).append(minutes == 1 ? " minute" : " minutes");
         }
 
-        if (seconds > 0 || result.length() == 0) {
-            if (result.length() > 0)
+        if (seconds > 0 || result.isEmpty()) {
+            if (!result.isEmpty())
                 result.append(" ");
 
             result.append(seconds).append(seconds == 1 ? " second" : " seconds");

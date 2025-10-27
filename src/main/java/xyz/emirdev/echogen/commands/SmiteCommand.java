@@ -1,6 +1,7 @@
 package xyz.emirdev.echogen.commands;
 
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,6 +25,11 @@ public class SmiteCommand extends PluginCommand {
                 .then(Commands.argument("players", ArgumentTypes.players())
                         .executes(this::smite))
                 .build();
+    }
+
+    @Override
+    public Set<String> getAliases() {
+        return Set.of("thor");
     }
 
     private int smite(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {

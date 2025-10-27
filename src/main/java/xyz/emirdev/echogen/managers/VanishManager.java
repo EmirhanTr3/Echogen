@@ -10,11 +10,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import org.bukkit.event.player.PlayerQuitEvent;
 import xyz.emirdev.echogen.Echogen;
 import xyz.emirdev.echogen.utils.Utils;
 
 public class VanishManager implements Listener {
-    private List<UUID> vanishedPlayers = new ArrayList<>();
+    private final List<UUID> vanishedPlayers = new ArrayList<>();
 
     public VanishManager() {
         this.run();
@@ -58,5 +59,11 @@ public class VanishManager implements Listener {
         for (UUID uuid : vanishedPlayers) {
             player.hidePlayer(Echogen.get(), Bukkit.getPlayer(uuid));
         }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        Player player = e.getPlayer();
+        vanishedPlayers.remove(player.getUniqueId());
     }
 }

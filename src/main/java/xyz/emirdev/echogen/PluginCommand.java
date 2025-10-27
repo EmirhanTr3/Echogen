@@ -2,6 +2,7 @@ package xyz.emirdev.echogen;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.bukkit.entity.Player;
@@ -17,6 +18,10 @@ import xyz.emirdev.echogen.utils.TimeUtils;
 
 public abstract class PluginCommand {
     public abstract LiteralCommandNode<CommandSourceStack> getCommand();
+
+    public Set<String> getAliases() {
+        return Set.of();
+    }
 
     public Predicate<CommandSourceStack> hasPermission(String permission) {
         return ctx -> ctx.getSender().hasPermission(permission);

@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "xyz.emirdev.echogen"
-version = "1.3.0"
+version = "1.3.1"
 
 repositories {
     mavenCentral()
@@ -31,6 +31,8 @@ dependencies {
 }
 
 tasks {
+    jar.get().enabled = false
+
     build {
         dependsOn("shadowJar")
     }

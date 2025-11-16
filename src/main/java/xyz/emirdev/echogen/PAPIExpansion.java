@@ -1,11 +1,15 @@
 package xyz.emirdev.echogen;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.njol.skript.lang.function.Function;
 import ch.njol.skript.lang.function.Functions;
+import ch.njol.skript.lang.function.Parameter;
 import ch.njol.skript.variables.Variables;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
@@ -65,11 +69,48 @@ public class PAPIExpansion extends PlaceholderExpansion {
         if (variable.startsWith("function_")) {
             String function = variable.substring("function_".length());
 
-            Object[][] funcParams = {{ player }};
+            Pattern pattern = Pattern.compile("(.*)\\((.*)\\)");
+            Matcher matcher = pattern.matcher(function);
+            String[] paramList = new String[0];
+
+            if (matcher.find()) {
+                function = matcher.group(1);
+                paramList = matcher.group(2).split(" ?, ?");
+            }
+
             Function<?> func = Functions.getGlobalFunction(function);
             if (func == null) return null;
 
-            Object[] returnValue = func.execute(funcParams);
+            List<Object> parsedFuncParams = new ArrayList<>();
+
+            for (int i = 0; i < paramList.length; i++) {
+                String param = paramList[i];
+                Parameter<?> parameter = func.getParameters()[i];
+                Class<?> type = parameter.getType().getC();
+
+                if (param.equals("player")) {
+                    parsedFuncParams.add(player);
+                    continue;
+                }
+
+                String value = PlaceholderAPI.setPlaceholders(player, "%" + param + "%");
+                Object output;
+
+                if (type == Long.class) {
+                    output = Long.valueOf(value);
+
+                } else if (Number.class.isAssignableFrom(type)) {
+                    output = Double.valueOf(value);
+
+                } else {
+                    output = value;
+                }
+
+                parsedFuncParams.add(output);
+            }
+
+            Object[][] finalFuncParams = { parsedFuncParams.toArray(new Object[0]) };
+            Object[] returnValue = func.execute(finalFuncParams);
             if (returnValue == null || returnValue.length == 0) return null;
 
             return String.valueOf(returnValue[0]);

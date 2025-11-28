@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -50,6 +51,9 @@ public class ChatEvent implements Listener {
         }
 
         String format = rootNode.node("chat", "format").getString();
+        if (Echogen.get().isPAPIEnabled()) {
+            format = PlaceholderAPI.setPlaceholders(player, format);
+        }
 
         return Utils.formatMessage(format,
                 Placeholder.parsed("prefix", prefix != null ? prefix : LuckPermsUtils.getPrefix(player)),

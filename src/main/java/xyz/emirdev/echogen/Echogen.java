@@ -14,6 +14,7 @@ import xyz.emirdev.echogen.managers.FilterManager;
 import xyz.emirdev.echogen.managers.PrefixManager;
 import xyz.emirdev.echogen.managers.ScoreboardManager;
 import xyz.emirdev.echogen.managers.VanishManager;
+import xyz.emirdev.echogen.task.BossBarTask;
 import xyz.emirdev.echogen.utils.ClassUtils;
 import xyz.emirdev.echogen.utils.MiniMessageUtils;
 
@@ -77,6 +78,8 @@ public class Echogen extends JavaPlugin {
 
         miniMessageUtils = new MiniMessageUtils();
         miniMessageUtils.run();
+
+        BossBarTask.startAll();
 
         if (isPAPIEnabled)
             new PAPIExpansion().register();

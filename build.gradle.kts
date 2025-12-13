@@ -1,12 +1,13 @@
 import net.minecrell.pluginyml.paper.PaperPluginDescription
 plugins {
 	id("java")
-	id("de.eldoria.plugin-yml.paper") version "0.7.1"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("de.eldoria.plugin-yml.paper") version "0.7.1"
     id("com.gradleup.shadow") version "9.0.0-rc1"
 }
 
 group = "xyz.emirdev.echogen"
-version = "1.3.2"
+version = "1.4.0"
 
 repositories {
     mavenCentral()
@@ -31,6 +32,14 @@ dependencies {
 }
 
 tasks {
+    runServer {
+        minecraftVersion("1.21.6")
+        downloadPlugins {
+            url("https://download.luckperms.net/1610/bukkit/loader/LuckPerms-Bukkit-5.5.21.jar")
+            modrinth("placeholderapi", "2.11.7")
+        }
+    }
+
     jar.get().enabled = false
 
     build {

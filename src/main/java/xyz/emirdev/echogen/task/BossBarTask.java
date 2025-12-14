@@ -26,10 +26,7 @@ public abstract class BossBarTask extends BukkitRunnable {
         while (iter.hasNext()) {
             Map.Entry<UUID, BossBar> entry = iter.next();
             Player player = Bukkit.getPlayer(entry.getKey());
-            if (player == null) {
-                iter.remove();
-                continue;
-            }
+            if (player == null) continue;
             updateBossBar(entry.getValue(), player);
         }
     }

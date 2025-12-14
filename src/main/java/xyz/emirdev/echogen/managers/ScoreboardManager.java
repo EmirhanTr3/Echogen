@@ -168,9 +168,6 @@ public class ScoreboardManager implements Listener {
                         break;
                     }
                 }
-                Echogen.get().getLogger().info("" + originalLines);
-                Echogen.get().getLogger().info("" + lines);
-                Echogen.get().getLogger().info("" + realLineNumber);
             }
 
             switch (replacementElement.getMode()) {

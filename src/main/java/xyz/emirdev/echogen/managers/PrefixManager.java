@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import lombok.Getter;
 import org.bukkit.entity.Player;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import io.leangen.geantyref.TypeToken;
@@ -80,9 +82,7 @@ public class PrefixManager {
 
         List<Map<String, PrefixValue>> prefixList;
         try {
-            prefixList = Echogen.get().getPluginConfig().getRootNode().node("chat", "prefix", "extra")
-                    .getList(new TypeToken<Map<String, PrefixValue>>() {
-                    });
+            prefixList = Echogen.get().getPluginConfig().getRootNode().node("chat", "prefix", "extra").getList(new TypeToken<>() {});
         } catch (SerializationException e) {
             e.printStackTrace();
             return;
@@ -115,6 +115,20 @@ public class PrefixManager {
             this.name = name;
             this.prefix = prefix;
             this.description = description;
+        }
+    }
+
+    @Getter
+    @ConfigSerializable
+    public static class PrefixValue {
+        @Setting
+        private String name;
+        @Setting
+        private String prefix;
+        @Setting
+        private List<String> description;
+
+        public PrefixValue() {
         }
     }
 }

@@ -29,3 +29,27 @@ scoreboard:
     - "<aqua>test"
     - "<red>hi"
     - "<aqua>You are <player>"
+  replacements:
+    - line: 1
+      mode: INSERT
+      condition: "%player_is_flying% == yes"
+      replacement: "<rainbow>You are flying"
+
+    - line: 3
+      condition: "%player_name% == FemboyEmir"
+      regex: "<player>"
+      replacement: "<pride:trans><player>"
+
+    - line: 1
+      condition:
+        - "%player_name% == FemboyEmir"
+        - "%player_gamemode% == CREATIVE"
+      replacement: "test replaced"
+
+    - mode: ADD
+      condition: "%player_gamemode% == SURVIVAL"
+      replacement: "<pride:gay>you are survivaling"
+
+    - line: 1
+      mode: DELETE
+      condition: "%player_gamemode% != CREATIVE"

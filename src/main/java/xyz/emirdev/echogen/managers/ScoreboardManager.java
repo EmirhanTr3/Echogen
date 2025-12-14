@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import io.leangen.geantyref.TypeToken;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +16,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
+import org.spongepowered.configurate.CommentedConfigurationNode;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import fr.mrmicky.fastboard.adventure.FastBoard;
@@ -102,11 +109,7 @@ public class ScoreboardManager implements Listener {
                         Echogen.get().getPluginConfig().getRootNode().node("scoreboard", "title").getString()),
                 tagResolvers.toArray(new TagResolver[0]));
 
-        List<Component> lines = Utils.formatMultiline(
-                parsePAPI(player, String.join("\n",
-                        Echogen.get().getPluginConfig().getRootNode().node("scoreboard", "lines")
-                                .getList(String.class))),
-                tagResolvers.toArray(new TagResolver[0]));
+        List<Component> lines = parseLines(board, tagResolvers);
 
         board.updateTitle(title);
         board.updateLines(lines);
@@ -118,5 +121,115 @@ public class ScoreboardManager implements Listener {
         } else {
             return string;
         }
+    }
+
+    private List<Component> parseLines(FastBoard board, List<TagResolver> tagResolvers) throws SerializationException {
+        Player player = board.getPlayer();
+
+        CommentedConfigurationNode rootNode = Echogen.get().getPluginConfig().getRootNode();
+        List<String> lines = rootNode.node("scoreboard", "lines").getList(String.class);
+        List<String> originalLines = lines.stream().toList();
+        List<ReplacementValue> replacements = rootNode.node("scoreboard", "replacements").getList(new TypeToken<>(){});
+
+        replacementLoop:
+        for (ReplacementValue replacementElement : replacements) {
+            int line = replacementElement.getLine();
+            List<String> conditions = replacementElement.getCondition();
+            String replacement = replacementElement.getReplacement();
+
+            for (String condition : conditions) {
+                Matcher matcher = Pattern.compile("(.*) ?(==|!=|<|>|<=|>=) ?(.*)").matcher(condition);
+                if (matcher.find()) {
+                    String placeholder = matcher.group(1).trim();
+                    String operation = matcher.group(2);
+                    String value = matcher.group(3).trim();
+                    String placeholderValue = parsePAPI(player, placeholder);
+
+                    boolean result = switch (operation) {
+                        case "==" -> placeholderValue.equals(value);
+                        case "!=" -> !placeholderValue.equals(value);
+                        case "<" -> Double.parseDouble(placeholderValue) < Double.parseDouble(value);
+                        case ">" -> Double.parseDouble(placeholderValue) > Double.parseDouble(value);
+                        case "<=" -> Double.parseDouble(placeholderValue) <= Double.parseDouble(value);
+                        case ">=" -> Double.parseDouble(placeholderValue) >= Double.parseDouble(value);
+                        default -> false;
+                    };
+
+                    if (!result) continue replacementLoop;
+                }
+            }
+
+            int realLineNumber = line - 1;
+
+            if (replacementElement.getLine() != 0) {
+                for (String lLine : lines) {
+                    if (lLine.equals(originalLines.get(realLineNumber))) {
+                        realLineNumber = lines.indexOf(lLine);
+                        break;
+                    }
+                }
+                Echogen.get().getLogger().info("" + originalLines);
+                Echogen.get().getLogger().info("" + lines);
+                Echogen.get().getLogger().info("" + realLineNumber);
+            }
+
+            switch (replacementElement.getMode()) {
+                case SET -> {
+                    if (lines.get(realLineNumber) != null) {
+                        if (replacementElement.getRegex() != null) {
+                            lines.set(realLineNumber,
+                                    lines.get(realLineNumber).replaceAll(replacementElement.getRegex(), replacement)
+                            );
+                        } else {
+                            lines.set(realLineNumber, replacement);
+                        }
+                    }
+                }
+                case DELETE ->  {
+                    if (lines.get(realLineNumber) != null) {
+                        lines.remove(realLineNumber);
+                    }
+                }
+                case ADD -> lines.add(replacement);
+                case INSERT -> {
+                    List<String> firstPart = lines.subList(0, realLineNumber).stream().toList();
+                    List<String> secondPart = lines.subList(realLineNumber, lines.size()).stream().toList();
+                    lines.clear();
+                    lines.addAll(firstPart);
+                    lines.add(replacement);
+                    lines.addAll(secondPart);
+                }
+            }
+        }
+
+        return Utils.formatMultiline(
+                parsePAPI(player, String.join("\n", lines)),
+                tagResolvers.toArray(new TagResolver[0])
+        );
+    }
+
+    @Getter
+    @ConfigSerializable
+    public static class ReplacementValue {
+        @Setting
+        private int line;
+        @Setting
+        private ReplacementMode mode = ReplacementMode.SET;
+        @Setting
+        private List<String> condition;
+        @Setting
+        private String regex;
+        @Setting
+        private String replacement;
+
+        public ReplacementValue() {
+        }
+    }
+    
+    public enum ReplacementMode {
+        SET,
+        DELETE,
+        ADD,
+        INSERT
     }
 }

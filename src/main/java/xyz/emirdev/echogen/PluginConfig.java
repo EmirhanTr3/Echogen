@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
@@ -13,19 +14,13 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 public class PluginConfig {
     private final Echogen plugin;
+    @Getter
     private YamlConfigurationLoader loader;
+    @Getter
     private CommentedConfigurationNode rootNode;
 
     public PluginConfig(Echogen plugin) {
         this.plugin = plugin;
-    }
-
-    public YamlConfigurationLoader getLoader() {
-        return this.loader;
-    }
-
-    public CommentedConfigurationNode getRootNode() {
-        return this.rootNode;
     }
 
     public void saveConfig() {
@@ -33,7 +28,6 @@ public class PluginConfig {
             this.loader.save(this.rootNode);
         } catch (ConfigurateException ex) {
             this.plugin.getSLF4JLogger().error("Couldn't save config:", ex);
-            return;
         }
     }
 

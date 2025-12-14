@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "xyz.emirdev.echogen"
-version = "1.4.0"
+version = "1.5.0"
 
 repositories {
     mavenCentral()
@@ -37,6 +37,8 @@ tasks {
         downloadPlugins {
             url("https://download.luckperms.net/1610/bukkit/loader/LuckPerms-Bukkit-5.5.21.jar")
             modrinth("placeholderapi", "2.11.7")
+            modrinth("skript", "2.13.2")
+            url("https://github.com/SkriptLang/skript-reflect/releases/download/v2.6.1/skript-reflect-2.6.1.jar")
         }
     }
 

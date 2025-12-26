@@ -28,7 +28,7 @@ import xyz.emirdev.echogen.utils.LuckPermsUtils;
 import xyz.emirdev.echogen.utils.TimeUtils;
 import xyz.emirdev.echogen.utils.Utils;
 
-public class ChatEvent implements Listener {
+public class PlayerChatListener implements Listener {
     public static final Map<UUID, Long> slowmodePlayers = new HashMap<>();
 
     public static Component getChatFormat(Player player, Component message, String prefix) {

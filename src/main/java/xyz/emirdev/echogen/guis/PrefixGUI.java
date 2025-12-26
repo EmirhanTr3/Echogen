@@ -17,7 +17,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import xyz.emirdev.echogen.Echogen;
-import xyz.emirdev.echogen.events.ChatEvent;
+import xyz.emirdev.echogen.events.PlayerChatListener;
 import xyz.emirdev.echogen.utils.LuckPermsUtils;
 import xyz.emirdev.echogen.utils.Utils;
 
@@ -107,7 +107,7 @@ public class PrefixGUI {
 
                         <status>"""
                         .replace("<description>", description),
-                        Placeholder.component("preview", ChatEvent.getChatFormat(player,
+                        Placeholder.component("preview", PlayerChatListener.getChatFormat(player,
                                 Utils.formatMessage("Preview message"), prefix.getPrefix())),
                         Placeholder.component("status", statusComponent));
                 meta.lore(lore.stream()

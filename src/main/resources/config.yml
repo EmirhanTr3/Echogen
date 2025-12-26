@@ -5,6 +5,10 @@ chat:
     enabled: true
     permission: false
 
+  messages:
+    join: "<gray>[<green>+</green>]</gray> <green><name></green>"
+    leave: "<gray>[<red>-</red>]</gray> <red><name></red>"
+
   filter:
     - nword:
         regex: \b(?!minigames?|shenanigans?)\w*n+ ?(?:i|1|!)+ ?g+ ?g?+ ?(?:e|a)?+ ?r?+\w*

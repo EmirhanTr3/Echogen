@@ -8,6 +8,8 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,12 +33,26 @@ import xyz.emirdev.echogen.utils.Utils;
 public class PlayerChatListener implements Listener {
     public static final Map<UUID, Long> slowmodePlayers = new HashMap<>();
 
+    private static MiniMessage noFormatMiniMessage = MiniMessage.builder()
+            .tags(TagResolver.resolver(
+                    StandardTags.color(),
+                    StandardTags.decorations(),
+                    StandardTags.rainbow(),
+                    StandardTags.gradient(),
+                    StandardTags.pride(),
+                    StandardTags.sequentialHead(),
+                    StandardTags.sprite(),
+                    StandardTags.shadowColor()
+            ))
+            .build();
+
     public static Component getChatFormat(Player player, Component message, String prefix) {
         CommentedConfigurationNode rootNode = Echogen.get().getPluginConfig().getRootNode();
 
         Component component = player.hasPermission("echogen.chat.component")
-                ? MiniMessage.miniMessage()
-                        .deserialize(PlainTextComponentSerializer.plainText().serialize(message))
+                ? player.hasPermission("echogen.chat.component.format")
+                        ? noFormatMiniMessage.deserialize(PlainTextComponentSerializer.plainText().serialize(message))
+                        : MiniMessage.miniMessage().deserialize(PlainTextComponentSerializer.plainText().serialize(message))
                 : message;
 
         ItemStack item = player.getInventory().getItemInMainHand();

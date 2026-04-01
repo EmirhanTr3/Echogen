@@ -1,5 +1,6 @@
 package xyz.emirdev.echogen.events;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +22,10 @@ public class PlayerQuitListener implements Listener {
         }
 
         Player player = event.getPlayer();
+
+        if (Echogen.get().isPAPIEnabled()) {
+            quitMessage = PlaceholderAPI.setPlaceholders(player, quitMessage);
+        }
 
         event.quitMessage(Utils.formatMessage(quitMessage,
                 Placeholder.parsed("name", player.getName())

@@ -1,5 +1,6 @@
 package xyz.emirdev.echogen.events;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,6 +31,10 @@ public class PlayerJoinListener implements Listener {
         }
 
         Player player = event.getPlayer();
+
+        if (Echogen.get().isPAPIEnabled()) {
+            joinMessage = PlaceholderAPI.setPlaceholders(player, joinMessage);
+        }
 
         event.joinMessage(Utils.formatMessage(joinMessage,
                 Placeholder.parsed("name", player.getName())

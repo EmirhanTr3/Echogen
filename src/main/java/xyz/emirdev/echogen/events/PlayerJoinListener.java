@@ -31,8 +31,8 @@ public class PlayerJoinListener implements Listener {
 
         Player player = event.getPlayer();
 
-        Utils.formatMessage(joinMessage,
+        event.joinMessage(Utils.formatMessage(joinMessage,
                 Placeholder.parsed("name", player.getName())
-        );
+        ));
     }
 }

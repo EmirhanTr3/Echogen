@@ -33,7 +33,7 @@ import xyz.emirdev.echogen.utils.Utils;
 public class PlayerChatListener implements Listener {
     public static final Map<UUID, Long> slowmodePlayers = new HashMap<>();
 
-    private static MiniMessage noFormatMiniMessage = MiniMessage.builder()
+    private static final MiniMessage noFormatMiniMessage = MiniMessage.builder()
             .tags(TagResolver.resolver(
                     StandardTags.color(),
                     StandardTags.decorations(),
@@ -51,8 +51,8 @@ public class PlayerChatListener implements Listener {
 
         Component component = player.hasPermission("echogen.chat.component")
                 ? player.hasPermission("echogen.chat.component.format")
-                        ? noFormatMiniMessage.deserialize(PlainTextComponentSerializer.plainText().serialize(message))
-                        : MiniMessage.miniMessage().deserialize(PlainTextComponentSerializer.plainText().serialize(message))
+                        ? MiniMessage.miniMessage().deserialize(PlainTextComponentSerializer.plainText().serialize(message))
+                        : noFormatMiniMessage.deserialize(PlainTextComponentSerializer.plainText().serialize(message))
                 : message;
 
         ItemStack item = player.getInventory().getItemInMainHand();

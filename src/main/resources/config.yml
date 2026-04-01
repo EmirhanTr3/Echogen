@@ -37,12 +37,12 @@ scoreboard:
     - line: 1
       mode: INSERT
       condition: "%player_is_flying% == yes"
-      replacement: "<rainbow>You are flying"
+      replacement: "<rainbow>You are flying</rainbow>"
 
     - line: 3
       condition: "%player_name% == FemboyEmir"
       regex: "<player>"
-      replacement: "<pride:trans><player>"
+      replacement: "<gradient:#D260A5:#E4AFCD:#FEFEFE:#57CEF8:#FEFEFE:#E4AFCD:#D260A5>%player_name%</gradient>"
 
     - line: 1
       condition:
@@ -52,7 +52,7 @@ scoreboard:
 
     - mode: ADD
       condition: "%player_gamemode% == SURVIVAL"
-      replacement: "<pride:gay>you are survivaling"
+      replacement: "<pride:gay>you are survivaling</pride>"
 
     - line: 1
       mode: DELETE

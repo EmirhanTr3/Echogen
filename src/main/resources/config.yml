@@ -57,3 +57,6 @@ scoreboard:
     - line: 1
       mode: DELETE
       condition: "%player_gamemode% != CREATIVE"
+
+other:
+  heal-also-feeds: true

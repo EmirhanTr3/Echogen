@@ -62,7 +62,7 @@ class PAPIExpansion(val plugin: Echogen) : PlaceholderExpansion() {
 
             val func = Functions.getGlobalFunction(function) ?: return null
 
-            val parsedFuncParams = mutableListOf<Any>()
+            val parsedFuncParams = mutableListOf<Any?>()
 
             for ((i, param) in paramList.withIndex()) {
                 val parameter = func.parameters[i]
@@ -75,8 +75,8 @@ class PAPIExpansion(val plugin: Echogen) : PlaceholderExpansion() {
 
                 val value = PlaceholderAPI.setPlaceholders(player, "%$param%")
                 val output = when {
-                    type == Long::class.java -> value.toLong()
-                    Number::class.java.isAssignableFrom(type) -> value.toDouble()
+                    type == Long::class.java -> value.toLongOrNull()
+                    Number::class.java.isAssignableFrom(type) -> value.toDoubleOrNull()
                     else -> value
                 }
 
@@ -92,8 +92,8 @@ class PAPIExpansion(val plugin: Echogen) : PlaceholderExpansion() {
 
         var defaultValue: String? = null
         if (variable.contains("_?_")) {
-            val split = variable.split("_\\?_")
-            if (split.size!= 2) return null
+            val split = variable.split("_?_")
+            if (split.size != 2) return null
 
             variable = split[0]
             defaultValue = split[1]

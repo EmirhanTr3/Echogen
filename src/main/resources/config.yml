@@ -11,7 +11,7 @@ chat:
 
   filter:
     - nword:
-        regex: \b(?!minigames?|shenanigans?)\w*n+ ?(?:i|1|!)+ ?g+ ?g?+ ?(?:e|a)?+ ?r?+\w*
+        regex: \b(?!minigames?|shenanigans?|night)\w*n+ ?(?:i|1|!)+ ?g+ ?g?+ ?(?:e|a)?+ ?r?+\w*
         type: censor
 
   prefix:

@@ -10,7 +10,7 @@ class TimeUtils {
                 return null
 
             var totalSeconds = 0L
-            val matcher = Pattern.compile ("(\\d+)\\s*(y|mo|w|d|h|m|s)").matcher (durationString.lowercase())
+            val matcher = Pattern.compile("(\\d+)\\s*(y|mo|w|d|h|m|s)").matcher(durationString.lowercase())
 
             var foundAnyMatch = false
 

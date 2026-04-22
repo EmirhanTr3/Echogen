@@ -34,7 +34,7 @@ class PluginConfig(val plugin: Echogen) {
                         return
                     }
 
-                    Files.createDirectories(configPath.getParent())
+                    Files.createDirectories(configPath.parent)
                     Files.copy(inputStream, configPath, StandardCopyOption.REPLACE_EXISTING)
                 }
             } catch (e: IOException) {

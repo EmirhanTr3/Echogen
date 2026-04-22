@@ -58,11 +58,7 @@ class ScoreboardManager(val plugin: Echogen) : Listener {
     fun run() {
         this.task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, Runnable {
             for (board in boards.values) {
-                try {
-                    updateBoard(board)
-                } catch (e: SerializationException) {
-                    e.printStackTrace()
-                }
+                updateBoard(board)
             }
         }, 0, 1)
     }
@@ -93,8 +89,8 @@ class ScoreboardManager(val plugin: Echogen) : Listener {
         val player = board.player
 
         val tagResolvers = listOf(
-                plugin.miniMessageUtils.animatedGradientTag(),
-                Placeholder.unparsed("player", player.name))
+            plugin.miniMessageUtils.animatedGradientTag(),
+            Placeholder.unparsed("player", player.name))
 
         val title = parsePAPI(player, plugin.config.rootNode.node("scoreboard", "title").string!!)
             .toComponent(*tagResolvers.toTypedArray())

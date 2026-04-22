@@ -22,7 +22,8 @@ class LuckPermsUtils(val plugin: Echogen) {
     }
     fun getPlayerGroups(player: Player): Set<Group> {
         val queryOptions = QueryOptions.defaultContextualOptions().toBuilder()
-                .flag(Flag.RESOLVE_INHERITANCE, false).build()
+                .flag(Flag.RESOLVE_INHERITANCE, false)
+                .build()
         return getUser(player)?.getInheritedGroups(queryOptions)?.toSet() ?: setOf()
     }
 

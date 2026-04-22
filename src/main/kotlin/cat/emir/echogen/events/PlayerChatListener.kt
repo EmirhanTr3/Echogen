@@ -62,9 +62,8 @@ class PlayerChatListener(val plugin: Echogen) : Listener {
 
         var format = rootNode.node("chat", "format").string ?: return message
 
-        if (plugin.isPAPIEnabled) {
+        if (plugin.isPAPIEnabled)
             format = PlaceholderAPI.setPlaceholders(player, format)
-        }
 
         return format.toComponent(
                 Placeholder.parsed("prefix", prefix ?: plugin.luckPermsUtils.getPrefix(player)),
@@ -99,15 +98,15 @@ class PlayerChatListener(val plugin: Echogen) : Listener {
 
         if (ChatCommand.slowmode != null && !player.hasPermission("echogen.chat.slowmode.bypass")) {
             if (!slowmodePlayers.containsKey(uuid)
-                    || System.currentTimeMillis() > slowmodePlayers[uuid]?.plus(ChatCommand.slowmode!!.toMillis())!!) {
+                    || System.currentTimeMillis() > slowmodePlayers[uuid]!! + ChatCommand.slowmode!!.toMillis()) {
                 slowmodePlayers[uuid] = System.currentTimeMillis()
             } else {
                 val expiresAt = slowmodePlayers[uuid]?.plus(ChatCommand.slowmode!!.toMillis())
                 val timeLeft = Duration.ofMillis(expiresAt?.minus(System.currentTimeMillis())!!)
 
                 player.sendRichMessage(
-                        "<red>You cannot send a message for <dark_red><duration></dark_red>.</red>",
-                        Placeholder.unparsed("duration", TimeUtils.parseDurationToString(timeLeft)!!))
+                    "<red>You cannot send a message for <dark_red><duration></dark_red>.</red>",
+                    Placeholder.unparsed("duration", TimeUtils.parseDurationToString(timeLeft)!!))
                 event.isCancelled = true
                 return
             }

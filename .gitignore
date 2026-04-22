@@ -3,5 +3,6 @@
 /.settings/
 /.gradle/
 /run/
+/.kotlin/
 .classpath
 .project

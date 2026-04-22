@@ -1,17 +1,15 @@
 package cat.emir.echogen
 
-import cat.emir.echode.ClassUtils
+import cat.emir.echogen.utils.ClassUtils
 import cat.emir.echogen.commandlib.PluginCommand
 import cat.emir.echogen.database.PrefixDatabase
 import cat.emir.echogen.managers.FilterManager
 import cat.emir.echogen.managers.PrefixManager
 import cat.emir.echogen.managers.ScoreboardManager
-import cat.emir.echogen.managers.ScoreboardManager.ReplacementValue
 import cat.emir.echogen.managers.VanishManager
 import cat.emir.echogen.task.BossBarTask
 import cat.emir.echogen.utils.LuckPermsUtils
 import cat.emir.echogen.utils.MiniMessageUtils
-import io.leangen.geantyref.TypeToken
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -21,8 +19,6 @@ import net.luckperms.api.LuckPermsProvider
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
-import org.spongepowered.configurate.ConfigurationNode
-import java.lang.reflect.InvocationTargetException
 
 fun String.toComponent(vararg resolvers: TagResolver): Component {
     return MiniMessage.miniMessage().deserialize(this, *resolvers)
@@ -30,7 +26,7 @@ fun String.toComponent(vararg resolvers: TagResolver): Component {
 
 fun String.toComponentList(vararg resolvers: TagResolver): List<Component> {
     val components = mutableListOf<Component>()
-    val strings = this.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+    val strings = this.split("\n").dropLastWhile { it.isEmpty() }.toTypedArray()
 
     for (string in strings) {
         components.add(MiniMessage.miniMessage().deserialize(string, *resolvers))

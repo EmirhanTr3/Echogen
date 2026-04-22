@@ -1,4 +1,4 @@
-package cat.emir.echode
+package cat.emir.echogen.utils
 
 import cat.emir.echogen.Echogen
 import io.github.classgraph.ClassGraph

@@ -34,11 +34,11 @@ class RamBarTask private constructor(plugin: Echogen) : BossBarTask(plugin) {
         bossbar.progress(getBossBarProgress())
         bossbar.color(getBossBarColor())
         bossbar.name("<gray>Ram<yellow>:</yellow> <used>/<xmx> (<percent>)".toComponent(
-                Placeholder.component("allocated", format(this.allocated)),
-                Placeholder.component("used", format(this.used)),
-                Placeholder.component("xmx", format(this.xmx)),
-                Placeholder.component("xms", format(this.xms)),
-                Placeholder.unparsed("percent", (this.percent * 100).toInt().toString() + "%")
+            Placeholder.component("allocated", format(this.allocated)),
+            Placeholder.component("used", format(this.used)),
+            Placeholder.component("xmx", format(this.xmx)),
+            Placeholder.component("xms", format(this.xms)),
+            Placeholder.unparsed("percent", (this.percent * 100).toInt().toString() + "%")
         ))
     }
 
@@ -54,7 +54,7 @@ class RamBarTask private constructor(plugin: Echogen) : BossBarTask(plugin) {
         this.used = heap.used
         this.xmx = heap.max
         this.xms = heap.init
-        this.percent = max(min((this.used / this.xmx).toFloat(), 1.0F), 0.0F)
+        this.percent = (this.used.toFloat() / this.xmx).coerceIn(0.0F, 1.0F)
 
         super.run()
     }
@@ -64,23 +64,15 @@ class RamBarTask private constructor(plugin: Echogen) : BossBarTask(plugin) {
     }
 
     fun getBossBarColor(): BossBar.Color {
-        if (this.percent < 0.5F) {
-            return BossBar.Color.GREEN
-        } else if (this.percent < 0.75F) {
-            return BossBar.Color.YELLOW
-        } else {
-            return BossBar.Color.RED
-        }
+        return if (this.percent < 0.5F) BossBar.Color.GREEN
+        else if (this.percent < 0.75F) BossBar.Color.YELLOW
+        else BossBar.Color.RED
     }
 
     fun format(v: Long): Component {
-        val color = if (this.percent < 0.60F) {
-            "<gradient:#55ff55:#00aa00><text></gradient>"
-        } else if (this.percent < 0.85F) {
-            "<gradient:#ffff55:#ffaa00><text></gradient>"
-        } else {
-            "<gradient:#ff5555:#aa0000><text></gradient>"
-        }
+        val color = if (this.percent < 0.60F) "<gradient:#55ff55:#00aa00><text></gradient>"
+        else if (this.percent < 0.85F) "<gradient:#ffff55:#ffaa00><text></gradient>"
+        else "<gradient:#ff5555:#aa0000><text></gradient>"
 
         val value = if (v < 1024) {
             "${v}B"

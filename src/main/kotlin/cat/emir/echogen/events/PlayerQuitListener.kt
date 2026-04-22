@@ -21,12 +21,11 @@ class PlayerQuitListener(val plugin: Echogen) : Listener {
 
         val player = event.player
 
-        if (plugin.isPAPIEnabled) {
+        if (plugin.isPAPIEnabled)
             quitMessage = PlaceholderAPI.setPlaceholders(player, quitMessage)
-        }
 
         event.quitMessage(quitMessage.toComponent(
-                Placeholder.parsed("name", player.name)
+            Placeholder.parsed("name", player.name)
         ))
     }
 }

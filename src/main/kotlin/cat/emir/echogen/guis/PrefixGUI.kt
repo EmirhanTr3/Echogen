@@ -48,8 +48,7 @@ class PrefixGUI(val plugin: Echogen, val player: Player) {
 
         val resetGuiItem = GuiItem(resetItem).apply {
             setAction {
-                if (plugin.prefixDatabase.getPrefix(player) == null)
-                    return@setAction
+                if (plugin.prefixDatabase.getPrefix(player) == null) return@setAction
                 plugin.prefixDatabase.deletePrefix(player)
                 openGUI()
             }
@@ -115,8 +114,7 @@ class PrefixGUI(val plugin: Echogen, val player: Player) {
 
             GuiItem(item).apply {
                 setAction {
-                    if (status != "unlocked")
-                        return@setAction
+                    if (status != "unlocked") return@setAction
                     plugin.prefixDatabase.setPrefix(player, prefix.id)
                     openGUI()
                 }

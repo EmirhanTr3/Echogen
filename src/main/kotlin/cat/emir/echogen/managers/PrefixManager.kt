@@ -48,10 +48,10 @@ class PrefixManager(val plugin: Echogen) {
             }
 
             prefixes.add(Prefix(
-                    "group-" + group.name,
-                    "<aqua>" + group.friendlyName,
-                    group.cachedData.metaData.prefix ?: "",
-                    listOf("This prefix requires ${group.friendlyName} group.")))
+                "group-${group.name}",
+                "<aqua>${group.friendlyName}",
+                group.cachedData.metaData.prefix ?: "",
+                listOf("This prefix requires ${group.friendlyName} group.")))
             plugin.logger.info("Loaded prefix from LuckPerms group ${group.name}")
         }
 
@@ -70,7 +70,12 @@ class PrefixManager(val plugin: Echogen) {
         }
     }
 
-    data class Prefix(val id: String, val name: String, val prefix: String, val description: List<String>)
+    data class Prefix(
+        val id: String,
+        val name: String,
+        val prefix: String,
+        val description: List<String>
+    )
 
     @ConfigSerializable
     data class PrefixValue(

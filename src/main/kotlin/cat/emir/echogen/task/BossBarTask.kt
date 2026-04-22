@@ -5,7 +5,6 @@ import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
 import cat.emir.echogen.Echogen
 
-import java.util.HashSet
 import java.util.UUID
 
 abstract class BossBarTask(val plugin: Echogen) : BukkitRunnable() {

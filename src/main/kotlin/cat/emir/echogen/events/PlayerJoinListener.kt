@@ -15,12 +15,10 @@ class PlayerJoinListener(val plugin: Echogen) : Listener {
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {
         val player = event.player
-        
-        if (RamBarTask.instance(plugin).hasPlayer(player.uniqueId)) {
-            RamBarTask.instance(plugin).addPlayer(player)
-        }
-        if (TPSBarTask.instance(plugin).hasPlayer(player.uniqueId)) {
-            TPSBarTask.instance(plugin).addPlayer(player)
+
+        listOf(RamBarTask.instance(plugin), TPSBarTask.instance(plugin)).forEach {
+            if (it.hasPlayer(player.uniqueId))
+                it.addPlayer(player)
         }
 
         var joinMessage = plugin.config.rootNode.node("chat", "messages", "join").string ?: return
@@ -30,12 +28,11 @@ class PlayerJoinListener(val plugin: Echogen) : Listener {
             return
         }
 
-        if (plugin.isPAPIEnabled) {
+        if (plugin.isPAPIEnabled)
             joinMessage = PlaceholderAPI.setPlaceholders(player, joinMessage)
-        }
 
         event.joinMessage(joinMessage.toComponent(
-                Placeholder.parsed("name", player.name)
+            Placeholder.parsed("name", player.name)
         ))
     }
 }

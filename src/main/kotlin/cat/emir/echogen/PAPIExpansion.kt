@@ -57,7 +57,7 @@ class PAPIExpansion(val plugin: Echogen) : PlaceholderExpansion() {
 
             if (matcher.find()) {
                 function = matcher.group(1)
-                paramList = matcher.group(2).split(" ?, ?").toMutableList()
+                paramList = matcher.group(2).split(Regex(" ?, ?")).toMutableList()
             }
 
             val func = Functions.getGlobalFunction(function) ?: return null

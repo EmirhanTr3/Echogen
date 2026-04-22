@@ -28,7 +28,11 @@ class FilterManager(val plugin: Echogen) {
         }
     }
 
-    data class FilterElement(val type: FilterType, val pattern: Pattern, val command: String? = null)
+    data class FilterElement(
+        val type: FilterType,
+        val pattern: Pattern,
+        val command: String? = null
+    )
 
     enum class FilterType {
         CENSOR,

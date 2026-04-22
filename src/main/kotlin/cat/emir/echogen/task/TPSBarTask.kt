@@ -29,9 +29,9 @@ class TPSBarTask private constructor(plugin: Echogen) : BossBarTask(plugin) {
         bossbar.progress(getBossBarProgress())
         bossbar.color(getBossBarColor())
         bossbar.name("<gray>TPS<yellow>:</yellow> <tps> MSPT<yellow>:</yellow> <mspt> Ping<yellow>:</yellow> <ping>ms".toComponent(
-                Placeholder.component("tps", getTPSColor()),
-                Placeholder.component("mspt", getMSPTColor()),
-                Placeholder.component("ping", getPingColor(player.ping))
+            Placeholder.component("tps", getTPSColor()),
+            Placeholder.component("mspt", getMSPTColor()),
+            Placeholder.component("ping", getPingColor(player.ping))
         ))
     }
 
@@ -52,13 +52,9 @@ class TPSBarTask private constructor(plugin: Echogen) : BossBarTask(plugin) {
     }
 
     fun getBossBarColor(): BossBar.Color {
-        return if (isGood(FillMode.MSPT)) {
-            BossBar.Color.GREEN
-        } else if (isMedium(FillMode.MSPT)) {
-            BossBar.Color.YELLOW
-        } else {
-            BossBar.Color.RED
-        }
+        return if (isGood(FillMode.MSPT)) BossBar.Color.GREEN
+        else if (isMedium(FillMode.MSPT)) BossBar.Color.YELLOW
+        else BossBar.Color.RED
     }
 
     fun isGood(mode: FillMode): Boolean {
@@ -86,35 +82,26 @@ class TPSBarTask private constructor(plugin: Echogen) : BossBarTask(plugin) {
     }
 
     fun getTPSColor(): Component {
-        val color = if (isGood(FillMode.TPS)) {
-            "<gradient:#55ff55:#00aa00><text></gradient>"
-        } else if (isMedium(FillMode.TPS)) {
-            "<gradient:#ffff55:#ffaa00><text></gradient>"
-        } else {
-            "<gradient:#ff5555:#aa0000><text></gradient>"
-        }
+        val color = if (isGood(FillMode.TPS)) "<gradient:#55ff55:#00aa00><text></gradient>"
+        else if (isMedium(FillMode.TPS)) "<gradient:#ffff55:#ffaa00><text></gradient>"
+        else "<gradient:#ff5555:#aa0000><text></gradient>"
+
         return color.toComponent(Placeholder.parsed("text", "%.2f".format(tps)))
     }
 
     fun getMSPTColor(): Component {
-        val color = if (isGood(FillMode.MSPT)) {
-            "<gradient:#55ff55:#00aa00><text></gradient>"
-        } else if (isMedium(FillMode.MSPT)) {
-            "<gradient:#ffff55:#ffaa00><text></gradient>"
-        } else {
-            "<gradient:#ff5555:#aa0000><text></gradient>"
-        }
+        val color = if (isGood(FillMode.MSPT)) "<gradient:#55ff55:#00aa00><text></gradient>"
+        else if (isMedium(FillMode.MSPT)) "<gradient:#ffff55:#ffaa00><text></gradient>"
+        else "<gradient:#ff5555:#aa0000><text></gradient>"
+
         return color.toComponent(Placeholder.parsed("text", "%.2f".format(mspt)))
     }
 
     fun getPingColor(ping: Int): Component {
-        val color = if (isGood(FillMode.PING, ping)) {
-            "<gradient:#55ff55:#00aa00><text></gradient>"
-        } else if (isMedium(FillMode.PING, ping)) {
-            "<gradient:#ffff55:#ffaa00><text></gradient>"
-        } else {
-            "<gradient:#ff5555:#aa0000><text></gradient>"
-        }
+        val color = if (isGood(FillMode.PING, ping)) "<gradient:#55ff55:#00aa00><text></gradient>"
+        else if (isMedium(FillMode.PING, ping)) "<gradient:#ffff55:#ffaa00><text></gradient>"
+        else "<gradient:#ff5555:#aa0000><text></gradient>"
+
         return color.toComponent(Placeholder.parsed("text", "%s".format(ping)))
     }
 

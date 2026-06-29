@@ -14,14 +14,14 @@ import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import cat.emir.echogen.Echogen
 import cat.emir.echogen.events.PlayerChatListener
-import cat.emir.echogen.toComponent
-import cat.emir.echogen.toComponentList
+import cat.emir.echolib.extensions.toComponent
+import cat.emir.echolib.extensions.toComponentList
 import org.bukkit.entity.Player
 
 class PrefixGUI(val plugin: Echogen, val player: Player) {
     fun openGUI() {
         val gui = ChestGui(6, ComponentHolder.of("<aqua>Prefix Selection".toComponent()))
-        val outerPane = StaticPane(0, 0, 9, 6)
+        val outerPane = StaticPane(9, 6)
 
         val borderItem = ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE).apply {
             editMeta {
@@ -55,9 +55,9 @@ class PrefixGUI(val plugin: Echogen, val player: Player) {
         }
 
         outerPane.addItem(resetGuiItem, 0, 0)
-        gui.addPane(outerPane)
+        gui.addPane(Slot.fromIndex(0), outerPane)
 
-        val innerPane = PaginatedPane(1, 1, 7, 4)
+        val innerPane = PaginatedPane(7, 4)
 
         val prefixGuiItems = plugin.prefixManager.prefixes.map { prefix ->
             val selectedPrefix = plugin.prefixDatabase.getPrefix(player)
@@ -103,7 +103,7 @@ class PrefixGUI(val plugin: Echogen, val player: Player) {
                         .replace("<description>", description)
                         .toComponentList(
                             Placeholder.component("preview",  PlayerChatListener(plugin)
-                                .getChatFormat(player, "Preview message".toComponent(), prefix.prefix)),
+                                .getChatFormat(player, "Preview message".toComponent(), prefix.prefix.ifEmpty { "<white>" })),
                             Placeholder.component("status", statusComponent)
                         )
 
@@ -122,7 +122,7 @@ class PrefixGUI(val plugin: Echogen, val player: Player) {
         }
 
         innerPane.populateWithGuiItems(prefixGuiItems)
-        gui.addPane(innerPane)
+        gui.addPane(Slot.fromXY(1, 1), innerPane)
 
         gui.setOnGlobalClick {
             it.isCancelled = true

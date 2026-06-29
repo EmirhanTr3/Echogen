@@ -1,7 +1,7 @@
 package cat.emir.echogen.managers
 
 import cat.emir.echogen.Echogen
-import cat.emir.echogen.toComponent
+import cat.emir.echolib.extensions.toComponent
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

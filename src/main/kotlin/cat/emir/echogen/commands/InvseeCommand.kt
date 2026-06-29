@@ -1,15 +1,15 @@
 package cat.emir.echogen.commands
 
-import cat.emir.echogen.commandlib.PluginCommand
-import cat.emir.echogen.commandlib.getPlayer
+import cat.emir.echogen.Echogen
+import cat.emir.echolib.command.PluginCommand
+import cat.emir.echolib.command.getPlayer
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
-import org.bukkit.inventory.InventoryHolder
 
-class InvseeCommand : PluginCommand() {
+class InvseeCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
     override fun meetsRequirements(): Boolean {
         plugin.logger.info("Disabled invsee command due to openinv being present.")
         return !plugin.isOpenInvEnabled

@@ -19,10 +19,11 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import cat.emir.echogen.Echogen
 import cat.emir.echogen.commands.ChatCommand
 import cat.emir.echogen.managers.FilterManager
-import cat.emir.echogen.toComponent
+import cat.emir.echolib.extensions.toComponent
 import cat.emir.echogen.utils.TimeUtils
+import cat.emir.echolib.event.EchoEvent
 
-class PlayerChatListener(val plugin: Echogen) : Listener {
+class PlayerChatListener(val plugin: Echogen) : EchoEvent(plugin) {
     val slowmodePlayers = mutableMapOf<UUID, Long>()
 
     val noFormatMiniMessage = MiniMessage.builder()

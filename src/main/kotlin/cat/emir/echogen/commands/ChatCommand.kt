@@ -1,7 +1,8 @@
 package cat.emir.echogen.commands
 
-import cat.emir.echogen.commandlib.PluginCommand
-import cat.emir.echogen.commandlib.getDuration
+import cat.emir.echogen.Echogen
+import cat.emir.echogen.getDuration
+import cat.emir.echolib.command.PluginCommand
 import java.time.Duration
 
 import com.mojang.brigadier.arguments.StringArgumentType
@@ -12,7 +13,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
-class ChatCommand : PluginCommand() {
+class ChatCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
     companion object {
         var isChatMuted = false
         var slowmode: Duration? = null

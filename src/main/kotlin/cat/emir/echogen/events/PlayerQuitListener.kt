@@ -6,9 +6,10 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
 import cat.emir.echogen.Echogen
-import cat.emir.echogen.toComponent
+import cat.emir.echolib.event.EchoEvent
+import cat.emir.echolib.extensions.toComponent
 
-class PlayerQuitListener(val plugin: Echogen) : Listener {
+class PlayerQuitListener(val plugin: Echogen) : EchoEvent(plugin) {
 
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {

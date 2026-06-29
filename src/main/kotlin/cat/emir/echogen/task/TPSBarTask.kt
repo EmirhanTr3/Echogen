@@ -1,7 +1,7 @@
 package cat.emir.echogen.task
 
 import cat.emir.echogen.Echogen
-import cat.emir.echogen.toComponent
+import cat.emir.echolib.extensions.toComponent
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder

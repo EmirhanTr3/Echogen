@@ -1,12 +1,12 @@
 package cat.emir.echogen.database
 
 import cat.emir.echogen.Echogen
+import cat.emir.echolib.database.FileDatabase
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
-import java.sql.Connection
 import java.util.UUID
 
-class PrefixDatabase(val plugin: Echogen) {
+class PrefixDatabase(plugin: Echogen, name: String): FileDatabase(plugin, name) {
     val cache = mutableMapOf<UUID, String?>()
 
     val CREATE = "CREATE TABLE IF NOT EXISTS prefix_table (uuid text, prefix text)"
@@ -14,21 +14,17 @@ class PrefixDatabase(val plugin: Echogen) {
     val SET = "MERGE INTO prefix_table (uuid, prefix) KEY (uuid) VALUES (?, ?)"
     val DELETE = "DELETE FROM prefix_table WHERE uuid=?"
 
-    fun load() {
-        getConnection().use { c ->
+    override fun load() {
+        connection.use { c ->
             c.prepareStatement(CREATE).execute()
         }
-    }
-
-    fun getConnection(): Connection {
-        return Database(plugin).createConnection()
     }
 
     fun getPrefix(player: OfflinePlayer): String? {
         if (cache.containsKey(player.uniqueId))
             return cache[player.uniqueId]
 
-        getConnection().use { c ->
+        connection.use { c ->
             val ps = c.prepareStatement(SELECT)
             ps.setString(1, player.uniqueId.toString())
             ps.executeQuery().use { rs ->
@@ -45,7 +41,7 @@ class PrefixDatabase(val plugin: Echogen) {
     }
 
     fun setPrefix(player: Player, prefixId: String) {
-        getConnection().use { c ->
+        connection.use { c ->
             val ps = c.prepareStatement(SET)
             ps.setString(1, player.uniqueId.toString())
             ps.setString(2, prefixId)
@@ -55,7 +51,7 @@ class PrefixDatabase(val plugin: Echogen) {
     }
 
     fun deletePrefix(player: Player) {
-        getConnection().use { c ->
+        connection.use { c ->
             val ps = c.prepareStatement(DELETE)
             ps.setString(1, player.uniqueId.toString())
             ps.execute()

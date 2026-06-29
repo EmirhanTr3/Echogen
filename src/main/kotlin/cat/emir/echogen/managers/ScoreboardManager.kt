@@ -10,7 +10,6 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.scheduler.BukkitTask
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Setting
-import org.spongepowered.configurate.serialize.SerializationException
 
 import fr.mrmicky.fastboard.adventure.FastBoard
 import me.clip.placeholderapi.PlaceholderAPI
@@ -18,8 +17,8 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import cat.emir.echogen.Echogen
-import cat.emir.echogen.toComponent
-import cat.emir.echogen.toComponentList
+import cat.emir.echolib.extensions.toComponent
+import cat.emir.echolib.extensions.toComponentList
 import java.util.UUID
 import java.util.regex.Pattern
 

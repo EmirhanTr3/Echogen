@@ -1,15 +1,16 @@
 import net.minecrell.pluginyml.paper.PaperPluginDescription
 plugins {
-    kotlin("jvm") version "2.3.20"
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    kotlin("jvm") version "2.4.0"
+    id("xyz.jpenilla.run-paper") version "3.0.1"
     id("de.eldoria.plugin-yml.paper") version "0.7.1"
     id("com.gradleup.shadow") version "9.0.0-rc1"
 }
 
 group = "cat.emir"
-version = "2.0.2"
+version = "2.0.3"
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
@@ -17,23 +18,25 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     paperLibrary("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    compileOnly("net.luckperms:api:5.4")
-    compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("net.luckperms:api:5.5")
+    compileOnly("me.clip:placeholderapi:2.12.2")
     compileOnly("com.github.SkriptLang:Skript:2.12.2")
-    paperLibrary("fr.mrmicky:fastboard:2.1.5")
+    paperLibrary("fr.mrmicky:fastboard:2.2.0")
+    implementation("com.github.stefvanschie.inventoryframework:IF:0.12.0")
+
+    // for echolib
+    implementation("cat.emir:EchoLib:1.0.5")
     paperLibrary("org.spongepowered:configurate-yaml:4.1.2")
-    paperLibrary("org.spongepowered:configurate-extra-kotlin:4.1.2")
-    paperLibrary("com.zaxxer:HikariCP:7.0.0")
-    paperLibrary("com.h2database:h2:2.3.232")
     paperLibrary("io.github.classgraph:classgraph:4.8.179")
-    implementation("com.github.stefvanschie.inventoryframework:IF:0.11.3")
+    paperLibrary("com.h2database:h2:2.3.232")
+    paperLibrary("com.zaxxer:HikariCP:7.0.2")
 }
 
 tasks {
     runServer {
-        minecraftVersion("1.21.10")
+        minecraftVersion("1.21.11")
         downloadPlugins {
             modrinth("viaversion", "5.9.0")
             modrinth("viabackwards", "5.9.0")

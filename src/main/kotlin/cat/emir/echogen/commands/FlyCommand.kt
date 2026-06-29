@@ -1,16 +1,17 @@
 package cat.emir.echogen.commands
 
+import cat.emir.echogen.Echogen
 import com.mojang.brigadier.context.CommandContext
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import cat.emir.echogen.commandlib.PluginCommand
-import cat.emir.echogen.commandlib.getPlayer
-import cat.emir.echogen.commandlib.getPlayers
+import cat.emir.echolib.command.PluginCommand
+import cat.emir.echolib.command.getPlayer
+import cat.emir.echolib.command.getPlayers
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 
-class FlyCommand : PluginCommand() {
+class FlyCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
     override fun getCommand(): LiteralArgumentBuilder<CommandSourceStack> {
         return command("fly") {

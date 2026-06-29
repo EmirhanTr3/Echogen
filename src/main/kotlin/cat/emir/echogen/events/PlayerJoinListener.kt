@@ -8,9 +8,10 @@ import org.bukkit.event.player.PlayerJoinEvent
 import cat.emir.echogen.Echogen
 import cat.emir.echogen.task.RamBarTask
 import cat.emir.echogen.task.TPSBarTask
-import cat.emir.echogen.toComponent
+import cat.emir.echolib.event.EchoEvent
+import cat.emir.echolib.extensions.toComponent
 
-class PlayerJoinListener(val plugin: Echogen) : Listener {
+class PlayerJoinListener(val plugin: Echogen) : EchoEvent(plugin) {
 
     @EventHandler
     fun onJoin(event: PlayerJoinEvent) {

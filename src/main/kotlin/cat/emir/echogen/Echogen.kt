@@ -1,7 +1,5 @@
 package cat.emir.echogen
 
-import cat.emir.echogen.utils.ClassUtils
-import cat.emir.echogen.commandlib.PluginCommand
 import cat.emir.echogen.database.PrefixDatabase
 import cat.emir.echogen.managers.FilterManager
 import cat.emir.echogen.managers.PrefixManager
@@ -10,32 +8,32 @@ import cat.emir.echogen.managers.VanishManager
 import cat.emir.echogen.task.BossBarTask
 import cat.emir.echogen.utils.LuckPermsUtils
 import cat.emir.echogen.utils.MiniMessageUtils
-import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.MiniMessage
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import cat.emir.echogen.utils.TimeUtils
+import cat.emir.echolib.EchoPlugin
+import cat.emir.echolib.PluginConfig
+import cat.emir.echolib.command.CommandLib
+import cat.emir.echolib.event.EventLoader
+import cat.emir.echolib.theme.ThemeManager
+import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.context.CommandContext
+import io.papermc.paper.command.brigadier.CommandSourceStack
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
-import org.bukkit.Bukkit
-import org.bukkit.event.Listener
-import org.bukkit.plugin.java.JavaPlugin
+import java.time.Duration
 
-fun String.toComponent(vararg resolvers: TagResolver): Component {
-    return MiniMessage.miniMessage().deserialize(this, *resolvers)
-}
+fun CommandContext<CommandSourceStack>.getDuration(argument: String): Duration? {
+    val durationString = StringArgumentType.getString(this, argument)
+    val duration = TimeUtils.convertStringToDuration(durationString)
 
-fun String.toComponentList(vararg resolvers: TagResolver): List<Component> {
-    val components = mutableListOf<Component>()
-    val strings = this.split("\n").dropLastWhile { it.isEmpty() }.toTypedArray()
-
-    for (string in strings) {
-        components.add(MiniMessage.miniMessage().deserialize(string, *resolvers))
+    if (duration == null) {
+        this.source.sender.sendRichMessage("<red>Invalid duration provided</red>")
+        return null
     }
 
-    return components
+    return duration
 }
 
-class Echogen : JavaPlugin() {
+class Echogen : EchoPlugin() {
     companion object {
         lateinit var instance: Echogen
             private set
@@ -44,12 +42,12 @@ class Echogen : JavaPlugin() {
     lateinit var luckPerms: LuckPerms
         private set
 
-    val config = PluginConfig(this)
+    val config = PluginConfig(this, "config.yml")
     val scoreboardManager = ScoreboardManager(this)
     val vanishManager = VanishManager(this)
     val filterManager = FilterManager(this)
     val prefixManager = PrefixManager(this)
-    val prefixDatabase = PrefixDatabase(this)
+    val prefixDatabase = PrefixDatabase(this, "database")
     val miniMessageUtils = MiniMessageUtils(this)
     val luckPermsUtils = LuckPermsUtils(this)
     var isPAPIEnabled = false
@@ -72,6 +70,8 @@ class Echogen : JavaPlugin() {
 
         config.load()
 
+        ThemeManager.builder(this).build()
+
         scoreboardManager.load()
         server.pluginManager.registerEvents(scoreboardManager, this)
 
@@ -90,26 +90,7 @@ class Echogen : JavaPlugin() {
         if (isPAPIEnabled)
             PAPIExpansion(this).register()
 
-        lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS) { manager ->
-            val registrar = manager.registrar()
-            ClassUtils.findClasses(
-                "cat.emir.echogen.commands",
-                { it.extendsSuperclass(PluginCommand::class.java) },
-                {
-                    val command = it.loadClass().asSubclass(PluginCommand::class.java).constructors[0].newInstance() as PluginCommand
-                    if (command.meetsRequirements())
-                        registrar.register(command.getCommand().build(), command.aliases)
-                }
-            )
-        }
-
-        ClassUtils.findClasses(
-            "cat.emir.echogen.events",
-            { it.implementsInterface(Listener::class.java) },
-            {
-                val event = it.loadClass().constructors[0].newInstance(this) as Listener
-                Bukkit.getPluginManager().registerEvents(event, this)
-            }
-        )
+        CommandLib.registerCommands(this, "cat.emir.echogen.commands")
+        EventLoader.registerEvents(this, "cat.emir.echogen.events")
     }
 }

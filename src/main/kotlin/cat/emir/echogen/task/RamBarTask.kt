@@ -1,15 +1,13 @@
 package cat.emir.echogen.task
 
 import cat.emir.echogen.Echogen
-import cat.emir.echogen.toComponent
+import cat.emir.echolib.extensions.toComponent
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.entity.Player
 
 import java.lang.management.ManagementFactory
-import kotlin.math.max
-import kotlin.math.min
 
 class RamBarTask private constructor(plugin: Echogen) : BossBarTask(plugin) {
     companion object {

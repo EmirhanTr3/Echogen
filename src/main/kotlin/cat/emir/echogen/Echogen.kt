@@ -13,7 +13,6 @@ import cat.emir.echolib.EchoPlugin
 import cat.emir.echolib.PluginConfig
 import cat.emir.echolib.command.CommandLib
 import cat.emir.echolib.event.EventLoader
-import cat.emir.echolib.theme.ThemeManager
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -69,8 +68,6 @@ class Echogen : EchoPlugin() {
         isOpenInvEnabled = server.pluginManager.isPluginEnabled("OpenInv")
 
         config.load()
-
-        ThemeManager.builder(this).build()
 
         scoreboardManager.load()
         server.pluginManager.registerEvents(scoreboardManager, this)

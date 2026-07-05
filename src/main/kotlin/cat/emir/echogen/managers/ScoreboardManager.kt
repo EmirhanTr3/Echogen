@@ -142,6 +142,11 @@ class ScoreboardManager(val plugin: Echogen) : Listener {
                 }
             }
 
+            if (replacementElement.mode == ReplacementMode.ADD) {
+                lines.add(replacement)
+                continue@replacementLoop
+            }
+
             var realLineNumber = line - 1
 
             if (replacementElement.line != 0) {
@@ -168,7 +173,6 @@ class ScoreboardManager(val plugin: Echogen) : Listener {
                         lines.removeAt(realLineNumber)
                     }
                 }
-                ReplacementMode.ADD -> lines.add(replacement)
                 ReplacementMode.INSERT -> {
                     val firstPart = lines.subList(0, realLineNumber).stream().toList()
                     val secondPart = lines.subList(realLineNumber, lines.size).stream().toList()

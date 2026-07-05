@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "cat.emir"
-version = "2.0.3"
+version = "2.0.4"
 
 repositories {
     mavenLocal()
@@ -27,7 +27,7 @@ dependencies {
     implementation("com.github.stefvanschie.inventoryframework:IF:0.12.0")
 
     // for echolib
-    implementation("cat.emir:EchoLib:1.0.5")
+    implementation("cat.emir:EchoLib:1.0.6")
     paperLibrary("org.spongepowered:configurate-yaml:4.1.2")
     paperLibrary("io.github.classgraph:classgraph:4.8.179")
     paperLibrary("com.h2database:h2:2.3.232")
@@ -67,7 +67,7 @@ paper {
     website = "https://github.com/EmirhanTr3/Echogen"
     main = "cat.emir.echogen.Echogen"
     loader = "cat.emir.echogen.load.LibraryLoader"
-    apiVersion = "1.21.10"
+    apiVersion = "1.21.11"
 
     // Keep this on!
     generateLibrariesJson = true

@@ -1,7 +1,5 @@
 package cat.emir.echogen
 
-import java.util.regex.Pattern
-
 import ch.njol.skript.lang.function.Functions
 import ch.njol.skript.variables.Variables
 import me.clip.placeholderapi.PlaceholderAPI
@@ -9,7 +7,6 @@ import org.bukkit.OfflinePlayer
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.entity.Player
-import java.util.Objects
 
 class PAPIExpansion(val plugin: Echogen) : PlaceholderExpansion() {
     override fun getAuthor(): String {
@@ -37,27 +34,31 @@ class PAPIExpansion(val plugin: Echogen) : PlaceholderExpansion() {
         if (params.startsWith("sk_")) {
             if (!plugin.isSkriptEnabled) return null
             return skriptPlaceholders(onlinePlayer, params)
+
+        } else if (params.startsWith("color_")) {
+            return colorConversionPlaceholders(onlinePlayer, params)
         }
 
         return when (params.lowercase()) {
             "vanished" -> plugin.vanishManager.isVanished(onlinePlayer).toString()
-            "prefix" -> Objects.requireNonNullElse(
-                    plugin.prefixManager.getPlayerPrefixString(onlinePlayer), "")
+            "prefix" -> plugin.prefixManager.getPlayerPrefixString(onlinePlayer) ?: ""
             else -> null
         }
     }
 
+    // %echogen_sk_variable%
+    // %echogen_sk_function_functionHere()%
     fun skriptPlaceholders(player: Player, params: String): String? {
         var variable = params.substring("sk_".length)
         if (variable.startsWith("function_")) {
             var function = variable.substring("function_".length)
 
-            val matcher = Pattern.compile("(.*)\\((.*)\\)").matcher(function)
             var paramList = mutableListOf<String>()
 
-            if (matcher.find()) {
-                function = matcher.group(1)
-                paramList = matcher.group(2).split(Regex(" ?, ?")).toMutableList()
+            val match = Regex("(.*)\\((.*)\\)").find(function)
+            if (match != null) {
+                function = match.groupValues[1]
+                paramList = match.groupValues[2].split(Regex(" ?, ?")).toMutableList()
             }
 
             val func = Functions.getGlobalFunction(function) ?: return null
@@ -99,16 +100,28 @@ class PAPIExpansion(val plugin: Echogen) : PlaceholderExpansion() {
             defaultValue = split[1]
         }
 
-        val matcher = Pattern.compile("[{\\[](.*?)[}\\]]").matcher(variable)
-
-        while (matcher.find()) {
-            val match = matcher.group(0)
-            val placeholder = matcher.group(1)
-            variable = variable.replace(match, PlaceholderAPI.setPlaceholders(player, "%$placeholder%"))
+        variable = Regex("[{\\[](.*?)[}\\]]").replace(variable) {
+            PlaceholderAPI.setPlaceholders(player, "%${it.groupValues[1]}%")
         }
 
         val value = Variables.getVariable(variable, null, false)
         if (value == null && defaultValue != null) return defaultValue
         return value.toString()
+    }
+
+    // %echogen_color_minimessage_text%
+    fun colorConversionPlaceholders(player: Player, params: String): String? {
+        val placeholder = params.substring("color_".length)
+        if (placeholder.startsWith("minimessage_")) {
+            var text = placeholder.substring("minimessage_".length)
+
+            text = Regex("[{\\[](.*?)[}\\]]").replace(text) {
+                PlaceholderAPI.setPlaceholders(player, "%${it.groupValues[1]}%")
+            }
+
+            return plugin.miniMessageUtils.convertColorToMiniMessage(text)
+        }
+
+        return null
     }
 }

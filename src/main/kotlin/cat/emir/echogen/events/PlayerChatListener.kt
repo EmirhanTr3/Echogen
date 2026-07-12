@@ -9,7 +9,6 @@ import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
-import org.bukkit.event.Listener
 
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
@@ -18,6 +17,8 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import cat.emir.echogen.Echogen
 import cat.emir.echogen.commands.ChatCommand
+import cat.emir.echogen.commands.OwnerChatCommand
+import cat.emir.echogen.commands.StaffChatCommand
 import cat.emir.echogen.managers.FilterManager
 import cat.emir.echolib.extensions.toComponent
 import cat.emir.echogen.utils.TimeUtils
@@ -90,6 +91,26 @@ class PlayerChatListener(val plugin: Echogen) : EchoEvent(plugin) {
     fun chatCmdEvent(event: AsyncChatEvent) {
         val player = event.player
         val uuid = player.uniqueId
+
+        if (OwnerChatCommand.toggledPlayers.contains(uuid)) {
+            if (!player.hasPermission("echogen.staffchat")) {
+                OwnerChatCommand.toggledPlayers.remove(uuid)
+            } else {
+                OwnerChatCommand.sendOwnerChatMessage(player, event.message())
+                event.isCancelled = true
+                return
+            }
+        }
+
+        if (StaffChatCommand.toggledPlayers.contains(uuid)) {
+            if (!player.hasPermission("echogen.ownerchat")) {
+                StaffChatCommand.toggledPlayers.remove(uuid)
+            } else {
+                StaffChatCommand.sendStaffChatMessage(player, event.message())
+                event.isCancelled = true
+                return
+            }
+        }
 
         if (ChatCommand.isChatMuted && !player.hasPermission("echogen.chat.mute.bypass")) {
             player.sendRichMessage("<red>Chat is currently muted.</red>")

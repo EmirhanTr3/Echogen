@@ -5,6 +5,9 @@ chat:
     enabled: true
     permission: false
 
+  staffchat-format: "<dark_aqua>[<aqua>SC</aqua>]</dark_aqua> <aqua><prefix><name><suffix></aqua> <#809090>»</#809090> <white><message>"
+  ownerchat-format: "<dark_red>[<red>OC</red>]</dark_red> <red><prefix><name><suffix></red> <#809090>»</#809090> <white><message>"
+
   messages:
     join: "<gray>[<green>+</green>]</gray> <green><name></green>"
     leave: "<gray>[<red>-</red>]</gray> <red><name></red>"

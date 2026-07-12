@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "cat.emir"
-version = "2.0.5"
+version = "2.0.6"
 
 repositories {
     mavenLocal()

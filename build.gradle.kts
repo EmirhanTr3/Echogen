@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "cat.emir"
-version = "2.0.6"
+version = "2.0.7"
 
 repositories {
     mavenLocal()
@@ -57,6 +57,46 @@ tasks {
     shadowJar {
         relocate("com.github.stefvanschie.inventoryframework", "cat.emir.echogen.inventoryframework")
         archiveClassifier = ""
+
+        // remove all versions until 1.21.10 since we only support 1.21.10-26.1.2
+        setOf(
+            "1_16_5",
+            "1_17_1",
+            "1_18_2",
+            "1_19_4",
+            "1_20_0", "1_20_1", "1_20_2", "1_20_3", "1_20_3-4", "1_20_5", "1_20_6",
+            "1_21_0", "1_21_1", "1_21_2_3", "1_21_2-3", "1_21_4", "1_21_5", "1_21_6_8", "1_21_6-8"
+        ).forEach {
+            exclude("com/github/stefvanschie/inventoryframework/nms/v$it/**")
+            exclude("META-INF/maven/com.github.stefvanschie.inventoryframework/$it/**")
+        }
+
+        // removing all IF classes that we don't need
+        exclude {
+            (it.path.startsWith("com/github/stefvanschie/inventoryframework/")
+                    && (it.name.endsWith("Gui.class") || it.name.endsWith("Pane.class"))
+                    && it.name != "ChestGui.class"
+                    && it.name != "Gui.class"
+                    && it.name != "NamedGui.class"
+                    && it.name != "MergedGui.class"
+                    && it.name != "Pane.class"
+                    && it.name != "PaginatedPane.class"
+                    && it.name != "StaticPane.class"
+                    && it.name != "OutlinePane.class"
+                    && it.name != "PositionedPane.class"
+            ) ||
+            (it.path.startsWith("com/github/stefvanschie/inventoryframework/pane/component")
+                    && it.name != "PagingButtons.class"
+            )
+        }
+
+        exclude("com/github/stefvanschie/inventoryframework/nms/v*/*InventoryImpl*.class")
+        exclude("fonts/**")
+        exclude("com/github/stefvanschie/inventoryframework/font/**")
+        exclude("com/github/stefvanschie/inventoryframework/abstraction/**")
+        exclude("META-INF/**")
+
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
 

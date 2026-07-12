@@ -4,7 +4,7 @@ import com.github.stefvanschie.inventoryframework.HumanEntityCache;
 import com.github.stefvanschie.inventoryframework.exception.XMLLoadException;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.GuiListener;
-import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.gui.type.*;
 import com.github.stefvanschie.inventoryframework.pane.*;
 import com.github.stefvanschie.inventoryframework.pane.component.*;
 import com.github.stefvanschie.inventoryframework.util.TriFunction;
@@ -282,6 +282,114 @@ public abstract class Gui {
     }
 
     /**
+     * Loads a Gui from a given input stream.
+     *
+     * @param instance the class instance for all reflection lookups
+     * @param inputStream the file
+     * @return the gui or null if the loading failed
+     * @throws XMLLoadException if loading could not finish successfully, due to e.g., a malformed file
+     * @see #load(Object, InputStream)
+     * @since 0.10.8
+     */
+    @Nullable
+    public static Gui load(@NotNull Object instance, @NotNull InputStream inputStream, @NotNull Plugin plugin) {
+        try {
+            Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream);
+            Element documentElement = document.getDocumentElement();
+
+            documentElement.normalize();
+
+            if (!documentElement.hasAttribute("type")) {
+                throw new XMLLoadException("Type attribute must be specified when loading via Gui.load");
+            }
+
+            String type = documentElement.getAttribute("type");
+            TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Gui> mapping = GUI_MAPPINGS
+                    .get(type);
+
+            if (mapping == null) {
+                throw new XMLLoadException("Type attribute '" + type + "' is invalid");
+            }
+
+            return mapping.apply(instance, documentElement, plugin);
+        } catch (SAXException | ParserConfigurationException | IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Loads a Gui from a given input stream.
+     * Returns null instead of throwing an exception in case of a failure.
+     *
+     * @param instance the class instance for all reflection lookups
+     * @param inputStream the file
+     * @return the gui or null if the loading failed
+     * @throws XMLLoadException if loading could not finish successfully, due to e.g., a malformed file
+     */
+    @Nullable
+    public static Gui load(@NotNull Object instance, @NotNull InputStream inputStream) {
+        return load(instance, inputStream, JavaPlugin.getProvidingPlugin(Gui.class));
+    }
+
+    /**
+     * Initializes standard fields from a Gui from a given input stream.
+     * Throws a {@link RuntimeException} instead of returning null in case of a failure.
+     *
+     * @param instance the class instance for all reflection lookups
+     * @param element the gui element
+     * @see #load(Object, InputStream)
+     */
+    protected void initializeOrThrow(@NotNull Object instance, @NotNull Element element) {
+        if (element.hasAttribute("field"))
+            XMLUtil.loadFieldAttribute(instance, element, this);
+
+        if (element.hasAttribute("onTopClick")) {
+            setOnTopClick(XMLUtil.loadOnEventAttribute(instance,
+                    element, InventoryClickEvent.class, "onTopClick"));
+        }
+
+        if (element.hasAttribute("onBottomClick")) {
+            setOnBottomClick(XMLUtil.loadOnEventAttribute(instance,
+                    element, InventoryClickEvent.class, "onBottomClick"));
+        }
+
+        if (element.hasAttribute("onGlobalClick")) {
+            setOnGlobalClick(XMLUtil.loadOnEventAttribute(instance,
+                    element, InventoryClickEvent.class, "onGlobalClick"));
+        }
+
+        if (element.hasAttribute("onOutsideClick")) {
+            setOnOutsideClick(XMLUtil.loadOnEventAttribute(instance,
+                    element, InventoryClickEvent.class, "onOutsideClick"));
+        }
+
+        if (element.hasAttribute("onTopDrag")) {
+            setOnTopDrag(XMLUtil.loadOnEventAttribute(instance,
+                    element, InventoryDragEvent.class, "onTopDrag"));
+        }
+
+        if (element.hasAttribute("onBottomDrag")) {
+            setOnBottomDrag(XMLUtil.loadOnEventAttribute(instance,
+                    element, InventoryDragEvent.class, "onBottomDrag"));
+        }
+
+        if (element.hasAttribute("onGlobalDrag")) {
+            setOnGlobalDrag(XMLUtil.loadOnEventAttribute(instance,
+                    element, InventoryDragEvent.class, "onGlobalDrag"));
+        }
+
+        if (element.hasAttribute("onClose")) {
+            setOnClose(XMLUtil.loadOnEventAttribute(instance,
+                    element, InventoryCloseEvent.class, "onClose"));
+        }
+
+        if (element.hasAttribute("populate")) {
+            XMLUtil.invokeMethod(instance, element.getAttribute("populate"), this, Gui.class);
+        }
+    }
+
+    /**
      * Set the consumer that should be called whenever this gui is clicked in.
      *
      * @param onTopClick the consumer that gets called
@@ -518,5 +626,113 @@ public abstract class Gui {
     @Contract(pure = true)
     public boolean isUpdating() {
         return updating;
+    }
+
+    /**
+     * Registers a property that can be used inside an XML file to add additional new properties.
+     *
+     * @param attributeName the name of the property. This is the same name you'll be using to specify the property
+     *                      type in the XML file.
+     * @param function how the property should be processed. This converts the raw text input from the XML node value
+     *                 into the correct object type.
+     * @throws IllegalArgumentException when a property with this name is already registered.
+     */
+    public static void registerProperty(@NotNull String attributeName, @NotNull Function<? super String, ?> function) {
+        GuiItem.registerProperty(attributeName, function);
+    }
+
+    /**
+     * Registers a name that can be used inside an XML file to add custom panes
+     *
+     * @param name the name of the pane to be used in the XML file
+     * @param triFunction how the pane loading should be processed
+     * @throws IllegalArgumentException when a pane with this name is already registered
+     * @see #registerPane(String, BiFunction)
+     * @since 0.10.8
+     */
+    public static void registerPane(@NotNull String name,
+                                    @NotNull TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Pane> triFunction) {
+        if (PANE_MAPPINGS.containsKey(name)) {
+            throw new IllegalArgumentException("pane name '" + name + "' is already registered");
+        }
+
+        PANE_MAPPINGS.put(name, triFunction);
+    }
+
+    /**
+     * Registers a name that can be used inside an XML file to add custom panes
+     *
+     * @param name the name of the pane to be used in the XML file
+     * @param biFunction how the pane loading should be processed
+     * @throws IllegalArgumentException when a pane with this name is already registered
+     */
+    public static void registerPane(@NotNull String name,
+                                    @NotNull BiFunction<? super Object, ? super Element, ? extends Pane> biFunction) {
+        registerPane(name, (object, element, plugin) -> biFunction.apply(object, element));
+    }
+
+    /**
+     * Registers a type that can be used inside an XML file to specify the gui type
+     *
+     * @param name the name of the type of gui to be used in an XML file
+     * @param triFunction how the gui creation should be processed
+     * @throws IllegalArgumentException when a gui type with this name is already registered
+     * @since 0.10.8
+     */
+    public static void registerGui(@NotNull String name,
+                                   @NotNull TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Gui> triFunction) {
+        if (GUI_MAPPINGS.containsKey(name)) {
+            throw new IllegalArgumentException("Gui name '" + name + "' is already registered");
+        }
+
+        GUI_MAPPINGS.put(name, triFunction);
+    }
+
+    /**
+     * Loads a pane by the given instance and node
+     *
+     * @param instance the instance
+     * @param node the node
+     * @param plugin the plugin to load the pane with
+     * @return the pane
+     * @throws XMLLoadException if the name of the node does not correspond to a valid pane.
+     * @since 0.10.8
+     */
+    @NotNull
+    public static Pane loadPane(@NotNull Object instance, @NotNull Node node, @NotNull Plugin plugin) {
+        String name = node.getNodeName();
+        TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Pane> mapping = PANE_MAPPINGS.get(name);
+
+        if (mapping == null) {
+            throw new XMLLoadException("Pane '" + name + "' is not registered or does not exist");
+        }
+
+        return mapping.apply(instance, (Element) node, plugin);
+    }
+
+    /**
+     * Loads a pane by the given instance and node
+     *
+     * @param instance the instance
+     * @param node the node
+     * @return the pane
+     */
+    @NotNull
+    public static Pane loadPane(@NotNull Object instance, @NotNull Node node) {
+        return loadPane(instance, node, JavaPlugin.getProvidingPlugin(Gui.class));
+    }
+
+    static {
+        registerPane("outlinepane",
+                (TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Pane>) OutlinePane::load);
+        registerPane("paginatedpane",
+                (TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Pane>) PaginatedPane::load);
+        registerPane("staticpane",
+                (TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Pane>) StaticPane::load);
+
+        registerPane("pagingbuttons", PagingButtons::load);
+
+        registerGui("chest",
+                (TriFunction<? super Object, ? super Element, ? super Plugin, ? extends Gui>) ChestGui::load);
     }
 }

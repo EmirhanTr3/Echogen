@@ -23,6 +23,7 @@ import cat.emir.echogen.managers.FilterManager
 import cat.emir.echolib.extensions.toComponent
 import cat.emir.echogen.utils.TimeUtils
 import cat.emir.echolib.event.EchoEvent
+import cat.emir.echolib.sendLangMessage
 
 class PlayerChatListener(val plugin: Echogen) : EchoEvent(plugin) {
     val slowmodePlayers = mutableMapOf<UUID, Long>()
@@ -113,7 +114,7 @@ class PlayerChatListener(val plugin: Echogen) : EchoEvent(plugin) {
         }
 
         if (ChatCommand.isChatMuted && !player.hasPermission("echogen.chat.mute.bypass")) {
-            player.sendRichMessage("<red>Chat is currently muted.</red>")
+            player.sendLangMessage("chat.current.muted")
             event.isCancelled = true
             return
         }
@@ -126,9 +127,9 @@ class PlayerChatListener(val plugin: Echogen) : EchoEvent(plugin) {
                 val expiresAt = slowmodePlayers[uuid]?.plus(ChatCommand.slowmode!!.toMillis())
                 val timeLeft = Duration.ofMillis(expiresAt?.minus(System.currentTimeMillis())!!)
 
-                player.sendRichMessage(
-                    "<red>You cannot send a message for <dark_red><duration></dark_red>.</red>",
-                    Placeholder.unparsed("duration", TimeUtils.parseDurationToString(timeLeft)!!))
+                player.sendLangMessage("chat.current.slowmode", listOf(
+                    "duration" to TimeUtils.parseDurationToString(timeLeft)!!
+                ))
                 event.isCancelled = true
                 return
             }
@@ -156,12 +157,12 @@ class PlayerChatListener(val plugin: Echogen) : EchoEvent(plugin) {
                             matcher.group(0).replace(Regex("."), "*"))
                     FilterManager.FilterType.BLOCK_MESSAGE -> {
                         event.isCancelled = true
-                        player.sendRichMessage("<red>Your message has been filtered.</red>")
+                        player.sendLangMessage("chat.current.filtered")
                         return
                     }
                     FilterManager.FilterType.COMMAND -> {
                         event.isCancelled = true
-                        player.sendRichMessage("<red>Your message has been filtered.</red>")
+                        player.sendLangMessage("chat.current.filtered")
                         plugin.server.scheduler.runTask(plugin, Runnable {
                             plugin.server.dispatchCommand(plugin.server.consoleSender,
                                 filter.command!!

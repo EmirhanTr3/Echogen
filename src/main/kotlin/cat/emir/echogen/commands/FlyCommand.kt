@@ -5,10 +5,10 @@ import com.mojang.brigadier.context.CommandContext
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import cat.emir.echolib.command.PluginCommand
 import cat.emir.echolib.command.getPlayer
 import cat.emir.echolib.command.getPlayers
+import cat.emir.echolib.sendLangMessage
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 
 class FlyCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
@@ -31,9 +31,9 @@ class FlyCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
         player.allowFlight = !allowFlight
 
         if (!allowFlight)
-            player.sendRichMessage("<aqua>You have <green>enabled</green> flight mode.</aqua>")
+            player.sendLangMessage("fly.self.enabled")
         else
-            player.sendRichMessage("<aqua>You have <red>disabled</red> flight mode.</aqua>")
+            player.sendLangMessage("fly.self.disabled")
 
         return 1
     }
@@ -47,13 +47,14 @@ class FlyCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
             target.allowFlight = !allowFlight
 
-            val playerTag = Placeholder.unparsed("player", target.name)
+            val data = listOf("player" to target.name)
+
             if (!allowFlight) {
-                sender.sendRichMessage("<aqua>You have <green>enabled</green> flight mode for <player>.</aqua>", playerTag)
-                target.sendRichMessage("<aqua>Your flight mode was <green>enabled</green>.</aqua>")
+                sender.sendLangMessage("fly.other.enabled.executor", data)
+                target.sendLangMessage("fly.other.enabled.target")
             } else {
-                sender.sendRichMessage("<aqua>You have <red>disabled</red> flight mode for <player>.</aqua>", playerTag)
-                target.sendRichMessage("<aqua>Your flight mode was <red>disabled</red>.</aqua>")
+                sender.sendLangMessage("fly.other.disabled.executor", data)
+                target.sendLangMessage("fly.other.disabled.target", data)
             }
         }
 

@@ -10,6 +10,7 @@ import cat.emir.echogen.utils.LuckPermsUtils
 import cat.emir.echogen.utils.MiniMessageUtils
 import cat.emir.echogen.utils.TimeUtils
 import cat.emir.echolib.EchoPlugin
+import cat.emir.echolib.Language
 import cat.emir.echolib.PluginConfig
 import cat.emir.echolib.command.CommandLib
 import cat.emir.echolib.event.EventLoader
@@ -42,6 +43,7 @@ class Echogen : EchoPlugin() {
         private set
 
     val config = PluginConfig(this, "config.yml")
+    val lang = Language(this, "lang.yml")
     val scoreboardManager = ScoreboardManager(this)
     val vanishManager = VanishManager(this)
     val filterManager = FilterManager(this)
@@ -53,11 +55,14 @@ class Echogen : EchoPlugin() {
     var isSkriptEnabled = false
     var isOpenInvEnabled = false
 
-    override fun reloadConfig() {
-        this.config.load()
+    fun reload(): Long {
+        val start = System.currentTimeMillis()
+        config.load()
+        lang.load()
         scoreboardManager.toggle(config.rootNode.node("scoreboard", "enabled").boolean)
         filterManager.load()
         prefixManager.load()
+        return System.currentTimeMillis() - start
     }
 
     override fun onEnable() {
@@ -68,6 +73,7 @@ class Echogen : EchoPlugin() {
         isOpenInvEnabled = server.pluginManager.isPluginEnabled("OpenInv")
 
         config.load()
+        lang.load()
 
         scoreboardManager.load()
         server.pluginManager.registerEvents(scoreboardManager, this)

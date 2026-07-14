@@ -4,11 +4,9 @@ import cat.emir.echogen.Echogen
 import cat.emir.echogen.getDuration
 import cat.emir.echolib.command.PluginCommand
 import java.time.Duration
-
-import com.mojang.brigadier.arguments.StringArgumentType
-
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import cat.emir.echogen.utils.TimeUtils
+import cat.emir.echolib.sendLangMessage
+import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
 import io.papermc.paper.command.brigadier.CommandSourceStack
@@ -52,7 +50,7 @@ class ChatCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
             }
         }
 
-        plugin.server.sendRichMessage("<aqua>Chat has been cleared.</aqua>")
+        plugin.server.sendLangMessage("chat.clear")
 
         return 1
     }
@@ -60,14 +58,12 @@ class ChatCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
     fun mute(ctx: CommandContext<CommandSourceStack>): Int {
         val sender = ctx.source.sender
 
-        val playerTag = Placeholder.unparsed("player", sender.name)
-
         if (!isChatMuted) {
             isChatMuted = true
-            plugin.server.sendRichMessage("<aqua>Chat has been <red>muted</red> by <player>.</aqua>", playerTag)
+            plugin.server.sendLangMessage("chat.mute", listOf("player" to sender.name))
         } else {
             isChatMuted = false
-            plugin.server.sendRichMessage("<aqua>Chat has been <green>unmuted</green> by <player>.</aqua>", playerTag)
+            plugin.server.sendLangMessage("chat.unmute", listOf("player" to sender.name))
         }
 
         return 1
@@ -79,10 +75,10 @@ class ChatCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
         slowmode = duration
 
-        plugin.server.sendRichMessage(
-            "<aqua>Chat slowmode has been set to <dark_aqua><duration></dark_aqua> by <player>.</aqua>",
-            Placeholder.unparsed("duration", TimeUtils.parseDurationToString(duration)!!),
-            Placeholder.unparsed("player", sender.name))
+        plugin.server.sendLangMessage("chat.slowmode.set", listOf(
+            "player" to sender.name,
+            "duration" to TimeUtils.parseDurationToString(duration)!!,
+        ))
 
         return 1
     }
@@ -92,9 +88,7 @@ class ChatCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
         slowmode = null
 
-        plugin.server.sendRichMessage(
-            "<aqua>Chat slowmode has been <dark_aqua>disabled</dark_aqua> by <player>.</aqua>",
-            Placeholder.unparsed("player", sender.name))
+        plugin.server.sendLangMessage("chat.slowmode.clear", listOf("player" to sender.name))
 
         return 1
     }

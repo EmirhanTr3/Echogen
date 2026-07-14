@@ -5,10 +5,10 @@ import com.mojang.brigadier.context.CommandContext
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import cat.emir.echolib.command.PluginCommand
 import cat.emir.echolib.command.getPlayer
 import cat.emir.echolib.command.getPlayers
+import cat.emir.echolib.sendLangMessage
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import org.bukkit.attribute.Attribute
 
@@ -31,7 +31,7 @@ class HealCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
         if (plugin.config.rootNode.node("other", "heal-also-feeds").boolean)
             player.foodLevel = 20
 
-        player.sendRichMessage("<aqua>You have been healed.</aqua>")
+        player.sendLangMessage("heal.target")
 
         return 1
     }
@@ -45,8 +45,8 @@ class HealCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
             if (plugin.config.rootNode.node("other", "heal-also-feeds").boolean)
                 target.foodLevel = 20
 
-            sender.sendRichMessage("<aqua>You have healed <player>.</aqua>", Placeholder.unparsed("player", target.name))
-            target.sendRichMessage("<aqua>You have been healed.</aqua>")
+            sender.sendLangMessage("heal.executor", listOf("player" to target.name))
+            target.sendLangMessage("heal.target")
         }
 
         return 1

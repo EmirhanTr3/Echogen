@@ -5,10 +5,10 @@ import com.mojang.brigadier.context.CommandContext
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import cat.emir.echolib.command.PluginCommand
 import cat.emir.echolib.command.getPlayer
 import cat.emir.echolib.command.getPlayers
+import cat.emir.echolib.sendLangMessage
 import com.mojang.brigadier.arguments.FloatArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 
@@ -53,9 +53,7 @@ class SpeedCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
         val speed = FloatArgumentType.getFloat(ctx, "speed")
 
         player.flySpeed = (speed / 10f)
-
-        player.sendRichMessage("<aqua>You have set your flight speed to <speed></aqua>",
-            Placeholder.unparsed("speed", speed.toString()))
+        player.sendLangMessage("speed.fly.self", listOf("speed" to speed.toString()))
 
         return 1
     }
@@ -68,10 +66,9 @@ class SpeedCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
         for (target in targets) {
             target.flySpeed = (speed / 10f)
 
-            val speedTag = Placeholder.unparsed("speed", speed.toString())
-            sender.sendRichMessage("<aqua>You have set flight speed of <player> to <speed>.</aqua>",
-                Placeholder.unparsed("player", target.name), speedTag)
-            target.sendRichMessage("<aqua>Your flight speed has been set to <speed>.</aqua>", speedTag)
+            val speedTag = "speed" to speed.toString()
+            sender.sendLangMessage("speed.fly.executor", listOf("player" to target.name, speedTag))
+            target.sendLangMessage("speed.fly.target", listOf(speedTag))
         }
 
         return 1
@@ -82,9 +79,7 @@ class SpeedCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
         val speed = FloatArgumentType.getFloat(ctx, "speed")
 
         player.walkSpeed = (speed / 10f)
-
-        player.sendRichMessage("<aqua>You have set your walk speed to <speed></aqua>",
-            Placeholder.unparsed("speed", speed.toString()))
+        player.sendLangMessage("speed.walk.self", listOf("speed" to speed.toString()))
 
         return 1
     }
@@ -97,10 +92,9 @@ class SpeedCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
         for (target in targets) {
             target.walkSpeed = (speed / 10f)
 
-            val speedTag = Placeholder.unparsed("speed", speed.toString())
-            sender.sendRichMessage("<aqua>You have set walk speed of <player> to <speed>.</aqua>",
-                Placeholder.unparsed("player", target.name), speedTag)
-            target.sendRichMessage("<aqua>Your walk speed has been set to <speed>.</aqua>", speedTag)
+            val speedTag = "speed" to speed.toString()
+            sender.sendLangMessage("speed.walk.executor", listOf("player" to target.name, speedTag))
+            target.sendLangMessage("speed.walk.target", listOf(speedTag))
         }
 
         return 1
@@ -112,9 +106,7 @@ class SpeedCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
         player.flySpeed = (speed / 10f)
         player.walkSpeed = (speed / 10f)
-
-        player.sendRichMessage("<aqua>You have set your speed to <speed></aqua>",
-            Placeholder.unparsed("speed", speed.toString()))
+        player.sendLangMessage("speed.all.self", listOf("speed" to speed.toString()))
 
         return 1
     }
@@ -128,10 +120,9 @@ class SpeedCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
             target.flySpeed = (speed / 10f)
             target.walkSpeed = (speed / 10f)
 
-            val speedTag = Placeholder.unparsed("speed", speed.toString())
-            sender.sendRichMessage("<aqua>You have set speed of <player> to <speed>.</aqua>",
-                Placeholder.unparsed("player", target.name), speedTag)
-            target.sendRichMessage("<aqua>Your speed has been set to <speed>.</aqua>", speedTag)
+            val speedTag = "speed" to speed.toString()
+            sender.sendLangMessage("speed.walk.executor", listOf("player" to target.name, speedTag))
+            target.sendLangMessage("speed.walk.target", listOf(speedTag))
         }
 
         return 1

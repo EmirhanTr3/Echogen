@@ -1,0 +1,77 @@
+chat:
+  clear: "<aqua>Chat has been cleared.</aqua>"
+  mute: "<aqua>Chat has been <red>muted</red> by <player>.</aqua>"
+  unmute: "<aqua>Chat has been <green>unmuted</green> by <player>.</aqua>"
+  slowmode:
+    set: "<aqua>Chat slowmode has been set to <dark_aqua><duration></dark_aqua> by <player>.</aqua>"
+    clear: "<aqua>Chat slowmode has been <dark_aqua>disabled</dark_aqua> by <player>.</aqua>"
+  current:
+    muted: "<red>Chat is currently muted.</red>"
+    filtered: "<red>Your message has been filtered.</red>"
+    slowmode: "<red>You cannot send a message for <dark_red><duration></dark_red>.</red>"
+
+feed:
+  target: "<aqua>You have been fed.</aqua>"
+  executor: "<aqua>You have fed <player>.</aqua>"
+
+fly:
+  self:
+    enabled: "<aqua>You have <green>enabled</green> flight mode.</aqua>"
+    disabled: "<aqua>You have <red>disabled</red> flight mode.</aqua>"
+  other:
+    enabled:
+      target: "<aqua>Your flight mode was <green>enabled</green>.</aqua>"
+      executor: "<aqua>You have <green>enabled</green> flight mode for <player>.</aqua>"
+    disabled:
+      target: "<aqua>Your flight mode was <red>disabled</red>.</aqua>"
+      executor: "<aqua>You have <red>disabled</red> flight mode for <player>.</aqua>"
+
+heal:
+  target: "<aqua>You have been healed.</aqua>"
+  executor: "<aqua>You have healed <player>.</aqua>"
+
+reload:
+  start: "<aqua>Reloading Echogen configuration..."
+  end: "<aqua>Reloaded Echogen configuration in <u><ms></u>ms."
+
+ownerchat:
+  enabled: "<aqua>You have <green>enabled</green> owner chat.</aqua>"
+  disabled: "<aqua>You have <red>disabled</red> owner chat.</aqua>"
+
+staffchat:
+  enabled: "<aqua>You have <green>enabled</green> staff chat.</aqua>"
+  disabled: "<aqua>You have <red>disabled</red> staff chat.</aqua>"
+
+smite:
+  executor: "<aqua>You have smitten <player>!</aqua>"
+
+speed:
+  fly:
+    self: "<aqua>You have set your flight speed to <speed></aqua>"
+    target: "<aqua>Your flight speed has been set to <speed>.</aqua>"
+    executor: "<aqua>You have set flight speed of <player> to <speed>.</aqua>"
+  walk:
+    self: "<aqua>You have set your walk speed to <speed></aqua>"
+    target: "<aqua>You have set walk speed of <player> to <speed>.</aqua>"
+    executor: "<aqua>Your walk speed has been set to <speed>.</aqua>"
+  all:
+    self: "<aqua>You have set your speed to <speed></aqua>"
+    target: "<aqua>Your speed has been set to <speed>.</aqua>"
+    executor: "<aqua>You have set speed of <player> to <speed>.</aqua>"
+
+sudo:
+  executor: "<aqua>You have made <dark_aqua><player></dark_aqua> send <dark_aqua><message></dark_aqua></aqua>"
+
+vanish:
+  current: "<green>You are currently vanished.</green>"
+  self:
+    enabled: "<aqua>You have <green>enabled</green> vanish.</aqua>"
+    disabled: "<aqua>You have <red>disabled</red> vanish.</aqua>"
+  other:
+    enabled:
+      target: "<aqua>Your vanish has been <green>enabled</green>.</aqua>"
+      executor: "<aqua>You have <green>enabled</green> vanish for <player>.</aqua>"
+    disabled:
+      target: "<aqua>Your vanish has been <red>disabled</red>.</aqua>"
+      executor: "<aqua>You have <red>disabled</red> vanish for <player>.</aqua>"
+

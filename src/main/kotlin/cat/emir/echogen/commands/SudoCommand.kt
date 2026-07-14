@@ -5,9 +5,9 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import cat.emir.echolib.command.PluginCommand
 import cat.emir.echolib.command.getPlayers
+import cat.emir.echolib.sendLangMessage
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 
 class SudoCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
@@ -31,10 +31,10 @@ class SudoCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
         for (target in targets) {
             target.chat(message)
 
-            sender.sendRichMessage(
-                "<aqua>You have made <dark_aqua><player></dark_aqua> send <dark_aqua><message></dark_aqua></aqua>",
-                Placeholder.unparsed("player", target.name),
-                Placeholder.unparsed("message", message))
+            sender.sendLangMessage("sudo.executor", listOf(
+                "player" to target.name,
+                "messsage" to message
+            ))
         }
 
         return 1

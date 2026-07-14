@@ -5,10 +5,10 @@ import com.mojang.brigadier.context.CommandContext
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import cat.emir.echolib.command.PluginCommand
 import cat.emir.echolib.command.getPlayer
 import cat.emir.echolib.command.getPlayers
+import cat.emir.echolib.sendLangMessage
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 
 class FeedCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
@@ -28,7 +28,7 @@ class FeedCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
         player.foodLevel = 20
 
-        player.sendRichMessage("<aqua>You have been fed.</aqua>")
+        player.sendLangMessage("feed.target")
 
         return 1
     }
@@ -40,8 +40,8 @@ class FeedCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
         for (target in targets) {
             target.foodLevel = 20
 
-            sender.sendRichMessage("<aqua>You have fed <player>.</aqua>", Placeholder.unparsed("player", target.name))
-            target.sendRichMessage("<aqua>You have been fed.</aqua>")
+            sender.sendLangMessage("feed.executor", listOf("player" to target.name))
+            target.sendLangMessage("feed.target")
         }
 
         return 1

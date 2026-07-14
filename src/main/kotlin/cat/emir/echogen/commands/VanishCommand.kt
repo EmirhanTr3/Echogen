@@ -5,9 +5,9 @@ import com.mojang.brigadier.context.CommandContext
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import cat.emir.echolib.command.PluginCommand
 import cat.emir.echolib.command.getPlayer
+import cat.emir.echolib.sendLangMessage
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 
 class VanishCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
@@ -29,10 +29,10 @@ class VanishCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
         if (!vanished) {
             plugin.vanishManager.vanish(player)
-            player.sendRichMessage("<aqua>You have <green>enabled</green> vanish.</aqua>")
+            player.sendLangMessage("vanish.self.enabled")
         } else {
             plugin.vanishManager.unVanish(player)
-            player.sendRichMessage("<aqua>You have <red>disabled</red> vanish.</aqua>")
+            player.sendLangMessage("vanish.self.disabled")
         }
 
         return 1
@@ -43,16 +43,16 @@ class VanishCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
         val target = ctx.getPlayer("player") ?: return 1
         val vanished = plugin.vanishManager.isVanished(target)
 
-        val playerTag = Placeholder.unparsed("player", target.name)
+        val data = listOf("player" to target.name)
 
         if (!vanished) {
             plugin.vanishManager.vanish(target)
-            sender.sendRichMessage("<aqua>You have <green>enabled</green> vanish for <player>.</aqua>", playerTag)
-            target.sendRichMessage("<aqua>Your vanish has been <green>enabled</green>.</aqua>")
+            sender.sendLangMessage("vanish.other.enabled.executor", data)
+            target.sendLangMessage("vanish.other.enabled.target")
         } else {
             plugin.vanishManager.unVanish(target)
-            sender.sendRichMessage("<aqua>You have <red>disabled</red> vanish for <player>.</aqua>", playerTag)
-            target.sendRichMessage("<aqua>Your vanish has been <red>disabled</red>.</aqua>")
+            sender.sendLangMessage("vanish.other.disabled.executor", data)
+            target.sendLangMessage("vanish.other.disabled.target")
         }
 
         return 1

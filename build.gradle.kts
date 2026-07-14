@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "cat.emir"
-version = "2.0.9"
+version = "2.1.0"
 
 repositories {
     mavenLocal()
@@ -27,7 +27,7 @@ dependencies {
     implementation("com.github.stefvanschie.inventoryframework:IF:0.12.0")
 
     // for echolib
-    implementation("cat.emir:EchoLib:1.0.6")
+    implementation("cat.emir:EchoLib:1.0.7")
     paperLibrary("org.spongepowered:configurate-yaml:4.1.2")
     paperLibrary("io.github.classgraph:classgraph:4.8.179")
     paperLibrary("com.h2database:h2:2.3.232")

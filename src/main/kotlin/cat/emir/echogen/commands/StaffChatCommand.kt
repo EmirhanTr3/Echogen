@@ -4,6 +4,7 @@ import cat.emir.echogen.Echogen
 import cat.emir.echolib.command.PluginCommand
 import cat.emir.echolib.command.getPlayer
 import cat.emir.echolib.extensions.toComponent
+import cat.emir.echolib.sendLangMessage
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
@@ -70,10 +71,10 @@ class StaffChatCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
         if (toggledPlayers.contains(player.uniqueId)) {
             toggledPlayers.remove(player.uniqueId)
-            player.sendMessage("<aqua>You have <red>disabled</red> staff chat.</aqua>".toComponent())
+            player.sendLangMessage("staffchat.disabled")
         } else {
             toggledPlayers.add(player.uniqueId)
-            player.sendMessage("<aqua>You have <green>enabled</green> staff chat.</aqua>".toComponent())
+            player.sendLangMessage("staffchat.enabled")
         }
 
         return 1

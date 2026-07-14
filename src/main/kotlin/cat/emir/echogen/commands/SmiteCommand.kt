@@ -5,9 +5,9 @@ import com.mojang.brigadier.context.CommandContext
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import cat.emir.echolib.command.PluginCommand
 import cat.emir.echolib.command.getPlayers
+import cat.emir.echolib.sendLangMessage
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 
 class SmiteCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
@@ -28,10 +28,7 @@ class SmiteCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
         for (target in targets) {
             target.world.strikeLightningEffect(target.location)
-
-            sender.sendRichMessage(
-                "<aqua>You have smitten <player>!</aqua>",
-                Placeholder.unparsed("player", target.name))
+            sender.sendLangMessage("smite.executor", listOf("player" to target.name))
         }
 
         return 1

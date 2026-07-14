@@ -15,7 +15,7 @@ class VanishManager(val plugin: Echogen) : Listener {
     fun load() {
         plugin.server.scheduler.runTaskTimer(plugin, Runnable {
             for (uuid in vanishedPlayers) {
-                plugin.server.getPlayer(uuid)?.sendActionBar("<green>You are currently vanished.</green>".toComponent())
+                plugin.server.getPlayer(uuid)?.sendActionBar(plugin.lang.get("vanish.current").toComponent())
             }
         }, 0, 1)
     }

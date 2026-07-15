@@ -29,7 +29,7 @@ class StaffChatCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
         fun sendStaffChatMessage(sender: CommandSender, message: String) {
             val plugin = Echogen.instance
-            var format = plugin.config.rootNode.node("chat", "staffchat-format").string ?: "<name>: <message>"
+            var format = plugin.config.rootNode.node("chat", "staffchat", "format").string ?: "<name>: <message>"
             val component = MiniMessage.miniMessage().deserialize(message)
 
             if (plugin.isPAPIEnabled)

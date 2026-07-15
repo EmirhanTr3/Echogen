@@ -17,6 +17,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import cat.emir.echogen.Echogen
+import cat.emir.echogen.utils.TypeParser
 import cat.emir.echolib.extensions.toComponent
 import cat.emir.echolib.extensions.toComponentList
 import java.util.UUID
@@ -121,7 +122,7 @@ class ScoreboardManager(val plugin: Echogen) : Listener {
             val replacement = replacementElement.replacement
 
             for (condition in conditions) {
-                val matcher = Pattern.compile("(.*) ?(==|!=|<|>|<=|>=) ?(.*)").matcher(condition)
+                val matcher = Pattern.compile("""(.*) ?(==|!=|<=|>=|<|>) ?(.*)""").matcher(condition)
                 if (matcher.find()) {
                     val placeholder = matcher.group(1).trim()
                     val operation = matcher.group(2)
@@ -129,12 +130,12 @@ class ScoreboardManager(val plugin: Echogen) : Listener {
                     val placeholderValue = parsePAPI(player, placeholder)
 
                     val result = when (operation) {
-                        "==" -> placeholderValue == value
-                        "!=" -> placeholderValue != value
-                        "<" -> placeholderValue.toDouble() < value.toDouble()
-                        ">" -> placeholderValue.toDouble() > value.toDouble()
-                        "<=" -> placeholderValue.toDouble() <= value.toDouble()
-                        ">=" -> placeholderValue.toDouble() >= value.toDouble()
+                        "==" -> TypeParser.compare(placeholderValue, value, TypeParser.Operator.EQUALS)
+                        "!=" -> TypeParser.compare(placeholderValue, value, TypeParser.Operator.NOT_EQUALS)
+                        "<" -> TypeParser.compare(placeholderValue, value, TypeParser.Operator.LESS)
+                        ">" -> TypeParser.compare(placeholderValue, value, TypeParser.Operator.GREATER)
+                        "<=" -> TypeParser.compare(placeholderValue, value, TypeParser.Operator.LESS_OR_EQUALS)
+                        ">=" -> TypeParser.compare(placeholderValue, value, TypeParser.Operator.GREATER_OR_EQUALS)
                         else -> false
                     }
 

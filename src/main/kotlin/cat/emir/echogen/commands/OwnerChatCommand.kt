@@ -29,14 +29,22 @@ class OwnerChatCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
         fun sendOwnerChatMessage(sender: CommandSender, message: String) {
             val plugin = Echogen.instance
-            var format = plugin.config.rootNode.node("chat", "ownerchat-format").string ?: "<name>: <message>"
+            var format = plugin.config.rootNode.node("chat", "ownerchat", "format").string ?: "<name>: <message>"
             val component = MiniMessage.miniMessage().deserialize(message)
 
             if (plugin.isPAPIEnabled)
                 format = PlaceholderAPI.setPlaceholders(sender as? Player, format)
 
             plugin.server.onlinePlayers
-                .filter { it.hasPermission("echogen.ownerchat") }
+                .filter {
+                    if (plugin.config.rootNode.node("chat", "ownerchat", "uuid-only").boolean) {
+                        val list = plugin.config.rootNode.node("chat", "ownerchat", "uuids")
+                            .getList(String::class.java) ?: emptyList<String>()
+                        list.contains(it.uniqueId.toString())
+                    } else {
+                        it.hasPermission("echogen.ownerchat")
+                    }
+                }
                 .forEach {
                     it.sendMessage(format.toComponent(
                         Placeholder.parsed("prefix",
@@ -58,7 +66,15 @@ class OwnerChatCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
     override fun getCommand(): LiteralArgumentBuilder<CommandSourceStack> {
         return command("ownerchat") {
-            requires { it.sender.hasPermission("echogen.ownerchat") }
+            requires {
+                if (plugin.config.rootNode.node("chat", "ownerchat", "uuid-only").boolean && it.sender is Player) {
+                    val list = plugin.config.rootNode.node("chat", "ownerchat", "uuids")
+                        .getList(String::class.java) ?: emptyList<String>()
+                    list.contains((it.sender as Player).uniqueId.toString())
+                } else {
+                    it.sender.hasPermission("echogen.ownerchat")
+                }
+            }
             executes(::toggle)
             argument("message", StringArgumentType.greedyString()) {
                 executes(::message)

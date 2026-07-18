@@ -86,9 +86,9 @@ class PAPIExpansion(val plugin: Echogen) : PlaceholderExpansion() {
                 parsedFuncParams.add(output)
             }
 
-            val finalFuncParams =
-                if (parsedFuncParams.isNotEmpty()) arrayOf(parsedFuncParams.toTypedArray())
-                else emptyArray()
+            val finalFuncParams = parsedFuncParams
+                .map { arrayOf(it) }
+                .toTypedArray()
 
             val returnValue = func.execute(finalFuncParams)
             if (returnValue.isNullOrEmpty()) return null

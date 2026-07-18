@@ -6,9 +6,9 @@ chat:
     permission: false
 
   staffchat:
-    format: "<dark_aqua>[<aqua>SC</aqua>]</dark_aqua> <aqua><prefix><name><suffix></aqua> <#809090>»</#809090> <white><message>"
+    format: "<dark_aqua>[<aqua>SC</aqua>]</dark_aqua> <aqua><prefix><name><suffix></aqua> <#809090>»</#809090> <aqua><message>"
   ownerchat:
-    format: "<dark_red>[<red>OC</red>]</dark_red> <red><prefix><name><suffix></red> <#809090>»</#809090> <white><message>"
+    format: "<dark_red>[<red>OC</red>]</dark_red> <red><prefix><name><suffix></red> <#809090>»</#809090> <red><message>"
     uuid-only: false
     uuids:
       - "60ed572b-8e0b-46f0-ae5c-dc7514aeb4dd"

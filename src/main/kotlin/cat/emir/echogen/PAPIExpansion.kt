@@ -55,10 +55,12 @@ class PAPIExpansion(val plugin: Echogen) : PlaceholderExpansion() {
 
             var paramList = mutableListOf<String>()
 
-            val match = Regex("(.*)\\((.*)\\)").find(function)
+            val match = Regex("""(.*)\((.*)\)""").find(function)
             if (match != null) {
                 function = match.groupValues[1]
-                paramList = match.groupValues[2].split(Regex(" ?, ?")).toMutableList()
+                paramList = match.groupValues[2].split(Regex(" ?, ?"))
+                    .filter { it.isNotEmpty() }
+                    .toMutableList()
             }
 
             val func = Functions.getGlobalFunction(function) ?: return null
@@ -84,7 +86,10 @@ class PAPIExpansion(val plugin: Echogen) : PlaceholderExpansion() {
                 parsedFuncParams.add(output)
             }
 
-            val finalFuncParams = arrayOf(parsedFuncParams.toTypedArray())
+            val finalFuncParams =
+                if (parsedFuncParams.isNotEmpty()) arrayOf(parsedFuncParams.toTypedArray())
+                else emptyArray()
+
             val returnValue = func.execute(finalFuncParams)
             if (returnValue.isNullOrEmpty()) return null
 
@@ -100,7 +105,7 @@ class PAPIExpansion(val plugin: Echogen) : PlaceholderExpansion() {
             defaultValue = split[1]
         }
 
-        variable = Regex("[{\\[](.*?)[}\\]]").replace(variable) {
+        variable = Regex("""[{\[](.*?)[}\]]""").replace(variable) {
             PlaceholderAPI.setPlaceholders(player, "%${it.groupValues[1]}%")
         }
 
@@ -115,7 +120,7 @@ class PAPIExpansion(val plugin: Echogen) : PlaceholderExpansion() {
         if (placeholder.startsWith("minimessage_")) {
             var text = placeholder.substring("minimessage_".length)
 
-            text = Regex("[{\\[](.*?)[}\\]]").replace(text) {
+            text = Regex("""[{\[](.*?)[}\]]""").replace(text) {
                 PlaceholderAPI.setPlaceholders(player, "%${it.groupValues[1]}%")
             }
 

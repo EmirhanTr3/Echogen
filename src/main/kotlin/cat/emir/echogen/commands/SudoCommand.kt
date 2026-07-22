@@ -33,7 +33,7 @@ class SudoCommand(plugin: Echogen) : PluginCommand<Echogen>(plugin) {
 
             sender.sendLangMessage("sudo.executor", listOf(
                 "player" to target.name,
-                "messsage" to message
+                "message" to message
             ))
         }
 
